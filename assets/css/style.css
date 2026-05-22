@@ -1,0 +1,103 @@
+/* Variables de couleurs MMI Meaux */
+:root {
+    --white: #FFFFFF;
+    --dark-grey: #424242;
+    --black: #000000;
+    --mmi-blue: #2E4588;
+    --light-bg: #f4f7f6;
+}
+
+
+body {
+    background-color: var(--light-bg);
+    color: var(--black);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+}
+
+/* Barre de navigation */
+.navbar {
+    background-color: var(--mmi-blue) !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Cartes (Dashboard, Formulaires) */
+.card {
+    background-color: var(--white);
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+
+/* Titres avec l'accent bleu */
+h1, h2, h3 {
+    color: var(--black);
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    position: relative;
+    padding-left: 15px;
+}
+
+h1::before, h2::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 10%;
+    height: 80%;
+    width: 5px;
+    background-color: var(--mmi-blue);
+    border-radius: 2px;
+}
+
+/* Boutons personnalisés */
+.btn-mmi {
+    background-color: var(--mmi-blue);
+    color: var(--white);
+    border: none;
+    padding: 10px 25px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn-mmi:hover {
+    background-color: var(--black);
+    color: var(--white);
+    box-shadow: 0 4px 12px rgba(46, 69, 136, 0.3);
+}
+
+.btn-outline-mmi {
+    border: 2px solid var(--mmi-blue);
+    color: var(--mmi-blue);
+    background: transparent;
+}
+
+/* Badges de rôles */
+.badge-role {
+    background-color: var(--dark-grey);
+    color: var(--white);
+    font-size: 0.75rem;
+    padding: 5px 12px;
+    border-radius: 50px;
+}
+
+/* Footer */
+footer {
+    background-color: var(--black);
+    color: var(--white);
+    padding: 2rem 0;
+    margin-top: 4rem;
+}

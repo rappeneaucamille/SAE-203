@@ -1,89 +1,75 @@
-<?php 
+<?php
 require_once 'includes/db.php';
-include 'includes/header.php';
-$msg = "";
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['email'];
-    $mdp = $_POST['mdp'];
-
-    // 1. Test dans la table Etudiant
-    $stmt = $pdo->prepare("SELECT * FROM Etudiant WHERE identifiant = ?");
-    $stmt->execute([$email]);
-    $user = $stmt->fetch();
-
-    if ($user && password_verify($mdp, $user['pwd'])) {
-        $_SESSION['user_id'] = $user['num_etudiant'];
-        $_SESSION['role'] = 'etudiant';
-        header('Location: pages/dashboard_etudiant.php');
-        exit();
-    } else {
-        // 2. Test dans la table Enseignant
-        $stmt = $pdo->prepare("SELECT * FROM Enseignant WHERE identifiant = ?");
-        $stmt->execute([$email]);
-        $user = $stmt->fetch();
-        
-        if ($user && password_verify($mdp, $user['pwd'])) {
-            $_SESSION['user_id'] = $user['id_ens'];
-            $_SESSION['role'] = $user['fonctions']; // Récupère la valeur de l'ENUM
-            
-            // Redirection selon la fonction précise définie à l'inscription
-            if ($_SESSION['role'] == 'Responsable stage') {
-                header('Location: pages/dashboard_responsable.php');
-            } elseif ($_SESSION['role'] == 'Jury de soutenance') {
-                header('Location: pages/dashboard_jury.php');
-            } elseif ($_SESSION['role'] == 'Enseignant standard') {
-                header('Location: pages/dashboard_enseignant.php');
-            } elseif ($_SESSION['role'] == 'Chef de département') {
-                header('Location: pages/dashboard_admin.php');
-            } else {
-                // Cas par défaut (Administrateur ou autre)
-                header('Location: pages/dashboard_admin.php');
-            }
-            exit();
-        } else { 
-            $msg = "Identifiants incorrects."; 
-        }
+// REDIRECTION AUTOMATIQUE SI DÉJÀ CONNECTÉ
+if (isset($_SESSION['role'])) {
+    switch ($_SESSION['role']) {
+        case 'etudiant':
+            header('Location: pages/etudiant/dashboard.php');
+            break;
+        case 'Responsable stage':
+            header('Location: pages/responsable/dashboard.php');
+            break;
+        case 'Administrateur': // Ajout/Vérification ici
+            header('Location: pages/admin/gestion.php');
+            break;
+        case 'Chef de département':
+            header('Location: pages/chef_dept/dashboard.php');
+            break;
+        case 'Enseignant standard':
+            header('Location: pages/enseignant/consultation.php');
+            break;
+        case 'Jury de soutenance':
+            header('Location: pages/jury/notes.php');
+            break;
+        case 'Administrateur':
+            header('Location: pages/admin/gestion.php');
+            break;
     }
+    exit();
 }
+
+include 'includes/header.php';
 ?>
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-4">
-            <div class="card p-4">
-                <h3 class="text-center mb-4" style="color:var(--bleu-marine)">Portail MMI</h3>
-                
-                <?php if($msg): ?>
-                    <div class="alert alert-danger"><?php echo $msg; ?></div>
-                <?php endif; ?>
+<div class="container d-flex align-items-center justify-content-center" style="min-height: 80vh;">
+    <div class="card p-4 shadow-lg" style="max-width: 450px; width: 100%; border-top: 5px solid var(--mmi-blue);">
+        <div class="text-center mb-4">
+            <div class="d-flex justify-content-around align-items-center mb-3">
+                <img src="assets/img/logo_univ.png" alt="Logo Université" style="height: 60px;">
+                <img src="assets/img/logo_site.png" alt="Logo Site" style="height: 60px;">
+            </div>
+            <h2 class="fw-bold">MMI Meaux</h2>
+            <p class="text-muted">Gestion des Stages • 3 ans de formation</p>
+        </div>
 
-                <?php if(isset($_GET['success'])): ?>
-                    <div class="alert alert-success">Inscription réussie, connectez-vous.</div>
-                <?php endif; ?>
+        <?php if(isset($_GET['error'])): ?>
+            <div class="alert alert-danger">Identifiants incorrects.</div>
+        <?php endif; ?>
 
-                <form method="POST">
-                    <div class="mb-3">
-                        <label class="form-label">Email universitaire / professionnel</label>
-                        <input type="email" name="email" class="form-control" placeholder="nom@univ-eiffel.fr" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Mot de passe</label>
-                        <input type="password" name="mdp" class="form-control" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Se connecter</button>
-                </form>
-                
-                <hr>
-                <div class="text-center mt-3">
-                    <small>Pas encore de compte ?</small><br>
-                    <a href="inscription.php" class="text-decoration-none">Inscription Étudiant</a> | 
-                    <a href="inscription_enseignant.php" class="text-decoration-none">Espace Prof</a>
-                </div>
+        <form action="auth/traitement_login.php" method="POST">
+            <div class="mb-3">
+                <label class="form-label fw-bold">Email Universitaire</label>
+                <input type="email" name="email" class="form-control" placeholder="nom.prenom@univ-eiffel.fr" required>
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-bold">Mot de passe</label>
+                <input type="password" name="mdp" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-mmi w-100 py-2">Se connecter</button>
+        </form>
+        
+        <hr class="my-4">
+        
+        <div class="text-center">
+            <p class="small mb-1">Pas encore de compte ?</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="auth/inscription.php" class="text-decoration-none fw-bold" style="color: var(--mmi-blue);">Étudiant</a>
+                <span class="text-muted">|</span>
+                <a href="auth/inscription_pro.php" class="text-decoration-none fw-bold" style="color: var(--dark-grey);">Enseignant / Admin</a>
             </div>
         </div>
     </div>
 </div>
 
-</body>
-</html>
+<?php include 'includes/footer.php'; ?>
