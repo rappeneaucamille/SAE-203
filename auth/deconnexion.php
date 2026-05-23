@@ -2,7 +2,8 @@
 session_start();
 session_unset();
 session_destroy();
-// On redirige vers l'index à la racine
-header('Location: ../index.php');
+
+// On redirige en utilisant un chemin qui repart de la racine du serveur
+header('Location: /SAE-203 - v2/index.php');
 exit();
 ?>

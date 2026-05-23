@@ -27,24 +27,33 @@ $offres = $pdo->query("SELECT * FROM Offre ORDER BY id_offre DESC");
             <div class="card p-4 shadow-sm">
                 <h5 class="mb-4 text-primary">📋 Offres de stage du département</h5>
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th>Intitulé</th>
+                                <th>Poste</th>
+                                <th>Entreprise</th>
                                 <th>Lieu</th>
-                                <th>Rémunération</th>
-                                <th>Action</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php while($o = $offres->fetch()): ?>
+                            <?php
+                            $offres = $pdo->query("SELECT * FROM Offre ORDER BY id_offre DESC")->fetchAll();
+                            foreach($offres as $o): 
+                                // Sécurité : si le titre est vide, on affiche "Sans titre"
+                                $titre = !empty($o['intitule']) ? htmlspecialchars($o['intitule']) : "Poste sans intitulé";
+                            ?>
                             <tr>
-                                <td><strong><?= $o['intitule'] ?></strong></td>
-                                <td><?= $o['lieu'] ?></td>
-                                <td><?= $o['remuneration'] ?> €</td>
-                                <td><button class="btn btn-sm btn-outline-mmi">Voir détails</button></td>
+                                <td><strong><?= $titre ?></strong></td>
+                                <td><?= htmlspecialchars($o['contact']) ?></td>
+                                <td><?= htmlspecialchars($o['lieu']) ?></td>
+                                <td>
+                                    <a href="postuler_traitement.php?id_offre=<?= $o['id_offre'] ?>" class="btn btn-sm btn-success">
+                                    <i class="bi bi-send"></i> Postuler
+                                    </a>        
+                                </td>                        
                             </tr>
-                            <?php endwhile; ?>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>

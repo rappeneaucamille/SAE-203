@@ -15,8 +15,8 @@ require_once 'db.php';
 
 <nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background-color: #0055A4 !important;">    <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="/index.php">
-            <img src="../../assets/img/logo_univ.png" alt="Univ" height="40" class="me-2 bg-white rounded p-1" onerror="this.src='/assets/img/logo_univ.png'">
-            <img src="../../assets/img/logo_site.png" alt="Site" height="40" class="me-2 bg-white rounded p-1" onerror="this.src='/assets/img/logo_site.png'">
+            <img src="/SAE-203 - v2/assets/img/logo_univ.png" alt="Univ" height="40" class="me-2 bg-white rounded p-1">
+            <img src="/SAE-203 - v2/assets/img/logo_site.png" alt="Site" height="40" class="me-2 bg-white rounded p-1">
             <span class="fw-bold ms-2">MMI STAGES</span>
         </a>
 
@@ -31,31 +31,31 @@ require_once 'db.php';
                 <?php if (isset($_SESSION['role'])): ?>
                     
                     <?php if ($_SESSION['role'] == 'etudiant'): ?>
-                        <li class="nav-item"><a class="nav-link" href="/pages/etudiant/dashboard.php">Profil</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/pages/etudiant/recherche.php">Recherche</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/pages/etudiant/mon_stage.php">Mon Stage</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/etudiant/dashboard.php">Profil</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/etudiant/recherche.php">Recherche</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/etudiant/mon_stage.php">Mon Stage</a></li>
 
                     <?php elseif ($_SESSION['role'] == 'Responsable stage'): ?>
-                        <li class="nav-item"><a class="nav-link" href="/pages/responsable/dashboard.php">Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/pages/responsable/validation.php">Validation</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/pages/responsable/suivi.php">Suivi</a></li>
-
+                        <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/responsable/dashboard.php">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/responsable/validation.php">Validation</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/responsable/suivi_responsable.php">Suivi</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/responsable/stats.php">Stats</a></li>
+                        
                     <?php elseif ($_SESSION['role'] == 'Administrateur'): ?>
-                        <li class="nav-item"><a class="nav-link fw-bold" href="/pages/admin/gestion.php">ADMIN</a></li>
+                        <li class="nav-item"><a class="nav-link fw-bold" href="/SAE-203 - v2/pages/admin/gestion.php">ADMIN</a></li>
 
                     <?php elseif ($_SESSION['role'] == 'Chef de département'): ?>
-                        <li class="nav-item"><a class="nav-link" href="/pages/chef_dept/dashboard.php">Vision Globale</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/chef_dept/dashboard.php">Vision Globale</a></li>
                     
                     <?php elseif ($_SESSION['role'] == 'Jury de soutenance'): ?>
-                        <li class="nav-item"><a class="nav-link" href="/pages/jury/notes.php">Saisie Notes</a></li>
-                    <?php endif; ?>
+                        <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/jury/notes.php">Saisie Notes</a></li>                    <?php endif; ?>
 
                     <li class="nav-item ms-lg-4">
                         <a class="btn btn-light btn-sm fw-bold btn-confirm" 
-                           style="color: var(--mmi-blue);" 
-                           data-confirm="Voulez-vous vraiment vous déconnecter ?" 
-                           href="../../auth/deconnexion.php">
-                           Se déconnecter
+                            style="color: #0055A4;" 
+                            data-confirm="Voulez-vous vraiment vous déconnecter ?" 
+                            href="/SAE-203 - v2/auth/deconnexion.php">
+                            Se déconnecter
                         </a>
                     </li>
 

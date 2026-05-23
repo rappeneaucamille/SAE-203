@@ -1,10 +1,24 @@
 /* Variables de couleurs MMI Meaux */
 :root {
-    --white: #FFFFFF;
-    --dark-grey: #424242;
-    --black: #000000;
-    --mmi-blue: #2E4588;
-    --light-bg: #f4f7f6;
+    /* Charte officielle */
+    --mmi-blue: #0055A4;      /* Le bleu foncé de base */
+    --mmi-dark: #212529;
+    
+    --pastel-blue: #E3F2FD;   /* Bleu très doux */
+    --pastel-purple: #F3E5F5; /* Violet très doux */
+    --pastel-green: #E8F5E9;  /* Vert doux (pour les succès) */
+}
+
+.card-pastel-blue {
+    background-color: var(--pastel-blue) !important;
+    border: none;
+    border-left: 5px solid var(--mmi-blue); /* Rappel de la charte sur le bord */
+}
+
+.card-pastel-purple {
+    background-color: var(--pastel-purple) !important;
+    border: none;
+    border-left: 5px solid #9C27B0; /* Bordure violette plus marquée */
 }
 
 

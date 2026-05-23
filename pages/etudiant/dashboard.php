@@ -39,20 +39,15 @@ $user = $stmt->fetch();
         <div class="col-md-6">
             <div class="card p-4 h-100 border-start border-primary border-4">
                 <h5 class="mb-3">Compléter mon profil</h5>
-                <form action="update_profil.php" method="POST">
-                    <div class="mb-2">
-                        <label class="small fw-bold">Date de naissance</label>
-                        <input type="date" name="date_naiss" class="form-control" value="<?= $user['date_naissance'] ?>">
-                    </div>
-                    <div class="mb-2">
-                        <label class="small fw-bold">Téléphone</label>
-                        <input type="text" name="tel" class="form-control" placeholder="06..." value="<?= $user['tel'] ?>">
-                    </div>
-                    <div class="mb-3">
-                        <label class="small fw-bold">Adresse complète</label>
-                        <textarea name="adresse" class="form-control" rows="2"><?= $user['adresse_postale'] ?></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-mmi w-100">Enregistrer les modifications</button>
+                <form action="update_full_profil.php" method="POST" class="row g-3">
+                    <div class="col-md-6"><label>Nom</label><input type="text" name="nom" class="form-control" value="<?= $user['nom'] ?>"></div>
+                    <div class="col-md-6"><label>Prénom</label><input type="text" name="prenom" class="form-control" value="<?= $user['prenom'] ?>"></div>
+                    <div class="col-md-6"><label>Téléphone</label><input type="text" name="tel" class="form-control" value="<?= $user['tel'] ?>"></div>
+                    <div class="col-md-6"><label>Adresse</label><input type="text" name="adresse" class="form-control" value="<?= $user['adresse'] ?>"></div>
+                    <div class="col-md-4"><label>Promotion</label><input type="text" name="promotion" class="form-control" value="<?= $user['promotion'] ?>"></div>
+                    <div class="col-md-4"><label>Groupe TD</label><input type="text" name="groupe_td" class="form-control" value="<?= $user['groupe_TD'] ?>"></div>
+                    <div class="col-md-4"><label>Groupe TP</label><input type="text" name="groupe_tp" class="form-control" value="<?= $user['groupe_TP'] ?>"></div>
+                    <button type="submit" class="btn btn-primary mt-3">Mettre à jour mon profil</button>
                 </form>
             </div>
         </div>
