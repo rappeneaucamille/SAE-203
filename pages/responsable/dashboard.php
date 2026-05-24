@@ -84,60 +84,6 @@ $enRecherche = $totalEtudiants - $stagesValides;
                 </div>
             </div>
         </div>
-
-        <div class="col-md-4">
-            <div class="card p-4 border-top border-4 border-mmi">
-                <h5>📢 Publier une offre</h5>
-                <hr>
-                <form action="traitement_offre.php" method="POST">
-                    <div class="mb-2">
-                        <label class="small fw-bold">Titre du poste</label>
-                        <input type="text" name="intitule" class="form-control" placeholder="ex: Designer Web" required>
-                    </div>
-                    <div class="mb-2">
-                        <label class="small fw-bold">Entreprise / Contact</label>
-                        <input type="text" name="contact" class="form-control" placeholder="nom de l'entreprise ou email" required>
-                    </div>
-                    <div class="mb-2">
-                        <label class="small fw-bold">Ville / Lieu</label>
-                        <input type="text" name="lieu" class="form-control" placeholder="ex: Meaux (77)">
-                    </div>
-                    <div class="mb-3">
-                        <label class="small fw-bold">Description</label>
-                        <textarea name="description" class="form-control" placeholder="Détails de l'offre..." rows="3"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-dark w-100">Publier l'offre</button>
-                </form>
-
-                <form action="traitement_offre.php" method="POST">
-                <div class="card mt-4 p-4 shadow-sm">
-                    <h5><i class="bi bi-megaphone"></i> Mes dernières offres publiées</h5>
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>Titre</th>
-                                <th>Entreprise</th>
-                                <th>Lieu</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            // On récupère les 5 dernières offres
-                            $offres = $pdo->query("SELECT * FROM Offre ORDER BY id_offre DESC LIMIT 5")->fetchAll();
-                            
-                            foreach($offres as $o): ?>
-                            <tr>
-                                <td><strong><?= htmlspecialchars($o['intitule']) ?></strong></td>
-                                <td><?= htmlspecialchars($o['contact']) ?></td>
-                                <td><?= htmlspecialchars($o['lieu']) ?></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-    
-            </div>
-        </div>
     </div>
 </div>
 

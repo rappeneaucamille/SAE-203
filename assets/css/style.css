@@ -115,3 +115,7 @@ footer {
     padding: 2rem 0;
     margin-top: 4rem;
 }
+
+.btn-primary, .btn-lg {
+    color: #ffffff !important;
+}

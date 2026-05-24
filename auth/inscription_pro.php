@@ -4,24 +4,33 @@ include '../includes/header.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = htmlspecialchars($_POST['email']);
-    $mdp = password_hash($_POST['mdp'], PASSWORD_DEFAULT);
+    $mdp = $_POST['mdp'];
+    $mdp_confirm = $_POST['mdp_confirm']; // On récupère la confirmation
     $nom = htmlspecialchars($_POST['nom']);
     $prenom = htmlspecialchars($_POST['prenom']);
     $fonction = $_POST['fonction'];
 
-    $sql = "INSERT INTO Enseignant (identifiant, pwd, nom, prenom, fonctions) VALUES (?, ?, ?, ?, ?)";
-    $stmt = $pdo->prepare($sql);
-    
-    try {
-        $stmt->execute([$email, $mdp, $nom, $prenom, $fonction]);
-        echo "<div class='alert alert-success'>Compte créé ! <a href='../index.php'>Se connecter</a></div>";
-    } catch(Exception $e) {
-        echo "<div class='alert alert-danger'>Erreur : Email déjà utilisé.</div>";
+    // Vérification : les mots de passe correspondent-ils ?
+    if ($mdp !== $mdp_confirm) {
+        echo "<div class='alert alert-danger'>Erreur : Les mots de passe ne sont pas identiques.</div>";
+    } else {
+        // Si c'est bon, on hash le mot de passe
+        $mdp_hashed = password_hash($mdp, PASSWORD_DEFAULT);
+
+        $sql = "INSERT INTO Enseignant (identifiant, pwd, nom, prenom, fonctions) VALUES (?, ?, ?, ?, ?)";
+        $stmt = $pdo->prepare($sql);
+        
+        try {
+            $stmt->execute([$email, $mdp_hashed, $nom, $prenom, $fonction]);
+            echo "<div class='alert alert-success'>Compte créé ! <a href='../index.php'>Se connecter</a></div>";
+        } catch(Exception $e) {
+            echo "<div class='alert alert-danger'>Erreur : Email déjà utilisé.</div>";
+        }
     }
 }
 ?>
 
-<div class="container">
+<div class="container py-5">
     <div class="card p-4 mx-auto shadow" style="max-width: 600px; border-top: 5px solid var(--dark-grey);">
         <h2 class="text-center mb-4">Espace Enseignant & Administration</h2>
         <form method="POST">
@@ -49,11 +58,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <label class="form-label fw-bold">Email Professionnel</label>
                 <input type="email" name="email" class="form-control" required>
             </div>
-            <div class="mb-3">
-                <label class="form-label fw-bold">Mot de passe</label>
-                <input type="password" name="mdp" class="form-control" required>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Mot de passe</label>
+                    <input type="password" name="mdp" class="form-control" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Confirmer le mot de passe</label>
+                    <input type="password" name="mdp_confirm" class="form-control" required>
+                </div>
             </div>
-            <button type="submit" class="btn btn-dark w-100">Enregistrer le profil</button>
+            <button type="submit" class="btn btn-dark w-100 mt-2">Enregistrer le profil</button>
         </form>
     </div>
 </div>

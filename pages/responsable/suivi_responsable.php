@@ -2,56 +2,74 @@
 require_once '../../includes/db.php';
 include '../../includes/header.php';
 
-// Sécurité : Seul le responsable peut accéder
 if ($_SESSION['role'] !== 'Responsable stage') {
     header('Location: ../../index.php');
     exit();
 }
+
+// Mise à jour de la reformulation du problème par le responsable
+if (isset($_POST['update_suivi'])) {
+    // On utilise ta colonne "probleme" existante
+    $stmt = $pdo->prepare("UPDATE stage SET probleme = ?, convention_signee = ? WHERE id_stage = ?");
+    $stmt->execute([$_POST['refomulation'], $_POST['convention'], $_POST['id_stage']]);
+    echo "<div class='alert alert-success m-2 shadow-sm'>Modifications enregistrées avec succès.</div>";
+}
 ?>
 
-<div class="container">
-    <h2 class="fw-bold mb-4" style="color: #0055A4;">Suivi des conventions</h2>
+<div class="container py-4">
+    <h2 class="fw-bold mb-4" style="color: #0055A4;"><i class="bi bi- clipboard-check"></i> Suivi & Remontée des Problèmes</h2>
     
-    <div class="card p-4 shadow-sm">
-        <div class="alert alert-info">
-            <i class="bi bi-info-circle"></i> Cette page affiche l'état de signature des conventions basées sur les stages validés.
-        </div>
-        
+    <div class="card shadow-sm border-0">
         <div class="table-responsive">
-            <table class="table table-striped align-middle">
+            <table class="table table-hover align-middle mb-0">
                 <thead class="table-dark">
                     <tr>
                         <th>Étudiant</th>
-                        <th>Lieu du stage</th>
-                        <th>État Convention</th>
+                        <th>Entreprise</th>
+                        <th>Signalement Étudiant</th>
+                        <th>Note du Responsable (Attribut "probleme")</th>
+                        <th>Convention</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    // Requête basée sur ton SQL : Table Stage et Etudiant
-                    $sql = "SELECT e.nom, e.prenom, s.lieu, s.convention_signee 
-                            FROM Stage s 
-                            JOIN Etudiant e ON s.num_etudiant = e.num_etudiant";
-                    
+                    // Requête avec tes vrais noms de colonnes
+                    $sql = "SELECT s.id_stage, s.lieu, s.convention_signee, s.probleme, s.alerte_etudiant, e.nom, e.prenom 
+                            FROM stage s 
+                            JOIN etudiant e ON s.num_etudiant = e.num_etudiant";
                     $res = $pdo->query($sql)->fetchAll();
                     
-                    if (count($res) > 0):
-                        foreach($res as $row): ?>
-                            <tr>
-                                <td><strong><?= strtoupper($row['nom']) ?></strong> <?= $row['prenom'] ?></td>
-                                <td><?= htmlspecialchars($row['lieu']) ?></td>
-                                <td>
-                                    <?= $row['convention_signee'] == 'oui' 
-                                        ? '<span class="badge bg-success">✅ Signée</span>' 
-                                        : '<span class="badge bg-warning text-dark">❌ En attente</span>' ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; 
-                    else: ?>
+                    foreach($res as $row): ?>
+                    <form method="POST">
+                        <input type="hidden" name="id_stage" value="<?= $row['id_stage'] ?>">
                         <tr>
-                            <td colspan="3" class="text-center text-muted p-4">Aucun stage n'a encore été officialisé.</td>
+                            <td><strong><?= strtoupper($row['nom']) ?></strong> <?= $row['prenom'] ?></td>
+                            <td><small><?= htmlspecialchars($row['lieu']) ?></small></td>
+                            <td style="max-width: 200px;">
+                                <?php if(!empty($row['alerte_etudiant'])): ?>
+                                    <div class="p-2 border rounded bg-light small text-danger" style="font-style: italic;">
+                                        "<?= htmlspecialchars($row['alerte_etudiant']) ?>"
+                                    </div>
+                                <?php else: ?>
+                                    <span class="text-muted small">RAS</span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <textarea name="refomulation" class="form-control form-control-sm" rows="2" placeholder="Reformuler le problème ici..."><?= htmlspecialchars($row['probleme'] ?? '') ?></textarea>
+                            </td>
+                            <td>
+                                <select name="convention" class="form-select form-select-sm">
+                                    <option value="oui" <?= $row['convention_signee'] == 'oui' ? 'selected' : '' ?>>Signée</option>
+                                    <option value="non" <?= $row['convention_signee'] == 'non' ? 'selected' : '' ?>>En attente</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button type="submit" name="update_suivi" class="btn btn-sm btn-primary">Enregistrer</button>
+                            </td>
                         </tr>
-                    <?php endif; ?>
+                    </form>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
