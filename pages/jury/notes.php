@@ -2,13 +2,14 @@
 require_once '../../includes/db.php';
 include '../../includes/header.php';
 
-// Sécurité : Seul le jury ou l'admin peut entrer
+// Sécurité
 if ($_SESSION['role'] !== 'Jury de soutenance' && $_SESSION['role'] !== 'Administrateur') {
     header('Location: ../../index.php');
     exit();
 }
 
-// Récupération des soutenances avec les noms des étudiants
+// On récupère les soutenances
+// ATTENTION : vérifie que 's.etudiant' correspond bien à 'e.identifiant' dans ta BDD
 $sql = "SELECT s.*, e.nom, e.prenom, e.promotion 
         FROM Soutenance s
         LEFT JOIN Etudiant e ON s.etudiant = e.identifiant 
@@ -16,8 +17,12 @@ $sql = "SELECT s.*, e.nom, e.prenom, e.promotion
 $soutenances = $pdo->query($sql)->fetchAll();
 ?>
 
-<div class="container">
+<div class="container py-4">
     <h2 class="fw-bold mb-4" style="color: #0055A4;">Saisie des Notes de Soutenance</h2>
+
+    <?php if(isset($_GET['status']) && $_GET['status'] == 'success'): ?>
+        <div class="alert alert-success">Note enregistrée avec succès !</div>
+    <?php endif; ?>
 
     <div class="card p-3 mb-4 shadow-sm border-0 bg-light">
         <div class="input-group">
@@ -26,46 +31,54 @@ $soutenances = $pdo->query($sql)->fetchAll();
         </div>
     </div>
 
-    <div class="card shadow-sm">
+    <div class="card shadow-sm border-0">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-dark">
                     <tr>
                         <th>Étudiant</th>
                         <th>Promotion</th>
-                        <th>Note Rapport /20</th>
-                        <th>Note Soutenance /20</th>
-                        <th class="bg-primary text-white">MOYENNE</th>
+                        <th style="width: 150px;">Note Rapport</th>
+                        <th style="width: 150px;">Note Oral</th>
+                        <th>Moyenne</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody id="notesTable">
                     <?php foreach($soutenances as $s): 
-                        // Calcul de la moyenne
                         $moyenne = ($s['note_rapport'] + $s['note_soutenance']) / 2;
                         $badge_color = ($moyenne >= 10) ? 'bg-success' : 'bg-danger';
                     ?>
                     <tr>
-                        <td><strong><?= strtoupper($s['nom']) ?></strong> <?= $s['prenom'] ?></td>
-                        <td><span class="badge bg-secondary"><?= $s['promotion'] ?></span></td>
-                        
                         <form action="save_notes.php" method="POST">
                             <input type="hidden" name="id_soutenance" value="<?= $s['id_soutenance'] ?>">
+                            
+                            <td><strong><?= strtoupper($s['nom'] ?? 'Inconnu') ?></strong> <?= $s['prenom'] ?? '' ?></td>
+                            <td><span class="badge bg-secondary"><?= $s['promotion'] ?? 'N/A' ?></span></td>
+                            
                             <td>
-                                <input type="number" step="0.25" min="0" max="20" name="note_rapport" 
-                                       class="form-control form-control-sm w-75" value="<?= $s['note_rapport'] ?>">
+                                <div class="input-group input-group-sm">
+                                    <input type="number" step="0.25" min="0" max="20" name="note_rapport" 
+                                           class="form-control" value="<?= $s['note_rapport'] ?>">
+                                    <span class="input-group-text">/20</span>
+                                </div>
                             </td>
                             <td>
-                                <input type="number" step="0.25" min="0" max="20" name="note_soutenance" 
-                                       class="form-control form-control-sm w-75" value="<?= $s['note_soutenance'] ?>">
+                                <div class="input-group input-group-sm">
+                                    <input type="number" step="0.25" min="0" max="20" name="note_soutenance" 
+                                           class="form-control" value="<?= $s['note_soutenance'] ?>">
+                                    <span class="input-group-text">/20</span>
+                                </div>
                             </td>
                             <td>
-                                <span class="badge <?= $badge_color ?> fs-6">
-                                    <?= number_format($moyenne, 2) ?> / 20
+                                <span class="badge <?= $badge_color ?> px-3 py-2">
+                                    <?= number_format($moyenne, 2) ?>
                                 </span>
                             </td>
                             <td>
-                                <button type="submit" class="btn btn-sm btn-dark">Enregistrer</button>
+                                <button type="submit" class="btn btn-primary btn-sm fw-bold">
+                                    <i class="bi bi-check-lg"></i> ENREGISTRER
+                                </button>
                             </td>
                         </form>
                     </tr>
@@ -75,5 +88,17 @@ $soutenances = $pdo->query($sql)->fetchAll();
         </div>
     </div>
 </div>
+
+<script>
+// Le moteur de recherche fonctionnel
+document.getElementById('tableSearch').addEventListener('keyup', function() {
+    let filter = this.value.toUpperCase();
+    let rows = document.querySelector("#notesTable").rows;
+    for (let i = 0; i < rows.length; i++) {
+        let text = rows[i].textContent.toUpperCase();
+        rows[i].style.display = text.includes(filter) ? "" : "none";
+    }
+});
+</script>
 
 <?php include '../../includes/footer.php'; ?>

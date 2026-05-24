@@ -2,10 +2,12 @@
 require_once '../../includes/db.php';
 include '../../includes/header.php';
 
-if ($_SESSION['role'] !== 'Responsable stage') {
+// SÉCURITÉ : On autorise le Responsable OU l'Admin
+if ($_SESSION['role'] !== 'Responsable stage' && $_SESSION['role'] !== 'Administrateur') {
     header('Location: ../../index.php');
     exit();
 }
+
 
 // 1. Calcul des statistiques globales
 $total = $pdo->query("SELECT COUNT(*) FROM etudiant")->fetchColumn();

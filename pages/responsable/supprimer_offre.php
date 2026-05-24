@@ -1,12 +1,13 @@
 <?php
 require_once '../../includes/db.php';
-session_start();
+include '../../includes/header.php';
 
-// Sécurité : on vérifie que c'est bien le responsable
-if ($_SESSION['role'] !== 'Responsable stage') {
+// SÉCURITÉ : On autorise le Responsable OU l'Admin
+if ($_SESSION['role'] !== 'Responsable stage' && $_SESSION['role'] !== 'Administrateur') {
     header('Location: ../../index.php');
     exit();
 }
+
 
 // On vérifie qu'un ID est bien transmis
 if (isset($_GET['id']) && !empty($_GET['id'])) {

@@ -1,5 +1,13 @@
 <?php
 require_once '../../includes/db.php';
+include '../../includes/header.php';
+
+// SÉCURITÉ : On autorise le Responsable OU l'Admin
+if ($_SESSION['role'] !== 'Responsable stage' && $_SESSION['role'] !== 'Administrateur') {
+    header('Location: ../../index.php');
+    exit();
+}
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Récupération de tous les champs

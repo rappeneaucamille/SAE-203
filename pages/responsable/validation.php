@@ -2,7 +2,12 @@
 require_once '../../includes/db.php';
 include '../../includes/header.php';
 
-if ($_SESSION['role'] !== 'Responsable stage') header('Location: ../../index.php');
+// SÉCURITÉ : On autorise le Responsable OU l'Admin
+if ($_SESSION['role'] !== 'Responsable stage' && $_SESSION['role'] !== 'Administrateur') {
+    header('Location: ../../index.php');
+    exit();
+}
+
 
 // LOGIQUE DE VALIDATION ET MISE À JOUR DES DONNÉES
 if (isset($_GET['action']) && isset($_GET['id'])) {
