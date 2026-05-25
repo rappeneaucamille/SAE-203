@@ -8,36 +8,43 @@ if ($_SESSION['role'] !== 'Chef de département') {
     exit();
 }
 
-// 1. GESTION DE LA PROMOTION (Chef de département spécifique)
-// On peut imaginer que la promo est stockée en session lors de la connexion
-// Sinon, on garde le filtre manuel mais on l'initialise par défaut
 $promo_filter = isset($_GET['promo']) ? $_GET['promo'] : (isset($_SESSION['promotion_chef']) ? $_SESSION['promotion_chef'] : '');
-
 $where_clause = $promo_filter ? "WHERE e.promotion = :promo" : "";
 
-// 2. RÉCUPÉRATION DES STATISTIQUES (Filtrées par promo si nécessaire)
-$sql_total = "SELECT COUNT(*) FROM Etudiant " . ($promo_filter ? "WHERE promotion = :promo" : "");
+// 1. Nombre total d'étudiants (Inchangé)
+$sql_total = "SELECT COUNT(DISTINCT num_etudiant) FROM Etudiant " . ($promo_filter ? "WHERE promotion = :promo" : "");
 $stmt_total = $pdo->prepare($sql_total);
 if($promo_filter) $stmt_total->bindParam(':promo', $promo_filter);
 $stmt_total->execute();
 $total_etud = $stmt_total->fetchColumn();
 
-$sql_valides = "SELECT COUNT(*) FROM Recherche r JOIN Effectuer ef ON r.id_recherche = ef.id_recherche JOIN Etudiant e ON ef.num_etudiant = e.num_etudiant WHERE r.statut = 'Validée' " . ($promo_filter ? "AND e.promotion = :promo" : "");
+// 2. Stages Validés (On compte les ÉTUDIANTS qui ont au moins un stage validé)
+$sql_valides = "SELECT COUNT(DISTINCT ef.num_etudiant) 
+                FROM Effectuer ef 
+                JOIN Recherche r ON ef.id_recherche = r.id_recherche 
+                JOIN Etudiant e ON ef.num_etudiant = e.num_etudiant 
+                WHERE r.statut = 'Validée' " . ($promo_filter ? "AND e.promotion = :promo" : "");
 $stmt_valides = $pdo->prepare($sql_valides);
 if($promo_filter) $stmt_valides->bindParam(':promo', $promo_filter);
 $stmt_valides->execute();
 $stages_valides = $stmt_valides->fetchColumn();
 
-$sql_attente = "SELECT COUNT(*) FROM Recherche r JOIN Effectuer ef ON r.id_recherche = ef.id_recherche JOIN Etudiant e ON ef.num_etudiant = e.num_etudiant WHERE r.statut = 'En attente' " . ($promo_filter ? "AND e.promotion = :promo" : "");
+// 3. En attente (On compte les ÉTUDIANTS qui attendent une réponse)
+$sql_attente = "SELECT COUNT(DISTINCT ef.num_etudiant) 
+                FROM Effectuer ef 
+                JOIN Recherche r ON ef.id_recherche = r.id_recherche 
+                JOIN Etudiant e ON ef.num_etudiant = e.num_etudiant 
+                WHERE r.statut = 'En attente' " . ($promo_filter ? "AND e.promotion = :promo" : "");
 $stmt_attente = $pdo->prepare($sql_attente);
 if($promo_filter) $stmt_attente->bindParam(':promo', $promo_filter);
 $stmt_attente->execute();
 $en_cours = $stmt_attente->fetchColumn();
 
-$sans_stage = $total_etud - $stages_valides;
+// 4. Calcul final
+$sans_stage = max(0, $total_etud - $stages_valides);
 
-// 3. RÉCUPÉRATION DES DÉTAILS PAR ÉTUDIANT
-$sql = "SELECT e.nom, e.prenom, e.promotion, r.statut, r.entreprise_contactee 
+// 3. RÉCUPÉRATION DES DÉTAILS (Ajout de r.reponses pour le Maître de Stage)
+$sql = "SELECT e.nom, e.prenom, e.promotion, r.statut, r.entreprise_contactee, r.reponses 
         FROM Etudiant e
         LEFT JOIN Effectuer ef ON e.num_etudiant = ef.num_etudiant
         LEFT JOIN Recherche r ON ef.id_recherche = r.id_recherche
@@ -50,7 +57,7 @@ $etudiants = $stmt_list->fetchAll();
 ?>
 
 <div class="container py-4">
-    <h2 class="fw-bold mb-4" style="color: #0055A4;">Tableau de Bord Direction MMI</h2>
+    <h2 class="fw-bold mb-4" style="color: #2e4588;">Tableau de Bord Direction MMI</h2>
 
     <div class="row g-3 mb-4">
         <div class="col-md-4">
@@ -86,7 +93,7 @@ $etudiants = $stmt_list->fetchAll();
             <div class="col-md-8">
                 <div class="input-group shadow-sm">
                     <span class="input-group-text bg-white border-0"><i class="bi bi-search"></i></span>
-                    <input type="text" id="tableSearch" class="form-control border-0" placeholder="Rechercher un nom ou une entreprise...">
+                    <input type="text" id="tableSearch" class="form-control border-0" placeholder="Rechercher un nom, une entreprise ou un tuteur...">
                 </div>
             </div>
         </form>
@@ -99,8 +106,8 @@ $etudiants = $stmt_list->fetchAll();
                     <tr>
                         <th>Étudiant</th>
                         <th>Promo</th>
-                        <th>Dernière Entreprise</th>
-                        <th>Statut Recherche</th>
+                        <th>Entreprise</th>
+                        <th>Maître de Stage</th> <th>Statut</th>
                     </tr>
                 </thead>
                 <tbody id="chefTable">
@@ -108,7 +115,24 @@ $etudiants = $stmt_list->fetchAll();
                     <tr>
                         <td><strong><?= strtoupper($e['nom']) ?></strong> <?= $e['prenom'] ?></td>
                         <td><span class="badge bg-light text-dark border"><?= $e['promotion'] ?></span></td>
-                        <td><?= $e['entreprise_contactee'] ?? '<span class="text-muted italic">Aucune démarche</span>' ?></td>
+                        <td><?= $e['entreprise_contactee'] ?? '<span class="text-muted italic">Aucune</span>' ?></td>
+                        
+                        <td class="small">
+                            <?php 
+                            if(!empty($e['reponses']) && $e['reponses'] !== "0") {
+                                // On cherche la ligne contenant "NOM :" dans le bloc texte
+                                $lignes = explode("\n", $e['reponses']);
+                                foreach($lignes as $ligne) {
+                                    if(strpos($ligne, 'NOM :') !== false || strpos($ligne, 'PRÉNOM :') !== false || strpos($ligne, 'EMAIL :') !== false) {
+                                        echo htmlspecialchars($ligne) . "<br>";
+                                    }
+                                }
+                            } else {
+                                echo '<span class="text-danger italic small"><i class="bi bi-x-circle"></i> Non renseigné</span>';
+                            }
+                            ?>
+                        </td>
+
                         <td>
                             <?php 
                             $badge = 'bg-secondary';
@@ -127,11 +151,9 @@ $etudiants = $stmt_list->fetchAll();
 </div>
 
 <script>
-// Recherche dynamique dans le tableau
 document.getElementById('tableSearch').addEventListener('keyup', function() {
     let filter = this.value.toUpperCase();
     let rows = document.querySelector("#chefTable").rows;
-    
     for (let i = 0; i < rows.length; i++) {
         let text = rows[i].textContent.toUpperCase();
         rows[i].style.display = text.includes(filter) ? "" : "none";

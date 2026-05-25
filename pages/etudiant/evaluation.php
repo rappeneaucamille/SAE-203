@@ -2,43 +2,77 @@
 require_once '../../includes/db.php';
 include '../../includes/header.php';
 
-$id_etud = $_SESSION['user_id'];
+// Sécurité
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'etudiant') {
+    header('Location: ../../index.php');
+    exit();
+}
 
-// On récupère la soutenance liée à l'étudiant
-$sql = "SELECT * FROM Soutenance WHERE etudiant = (SELECT identifiant FROM Etudiant WHERE num_etudiant = ?)";
-$stmt = $pdo->prepare($sql);
-$stmt->execute([$id_etud]);
-$note = $stmt->fetch();
+// On récupère l'identifiant (ex: rap@rap) qui est maintenant bien dans la session
+$etudiant_id = $_SESSION['identifiant'] ?? ''; 
+
+$soutenance = false;
+if (!empty($etudiant_id)) {
+    // On cherche dans ta table soutenance
+    $stmt = $pdo->prepare("SELECT note_soutenance, note_rapport, date_soutenance FROM soutenance WHERE etudiant = ?");
+    $stmt->execute([$etudiant_id]);
+    $soutenance = $stmt->fetch();
+}
+
+$noteVisible = false;
+$joursRestants = 0;
+
+if ($soutenance) {
+    $dateSoutenance = new DateTime($soutenance['date_soutenance']);
+    $dateAujourdhui = new DateTime();
+    $datePublication = clone $dateSoutenance;
+    $datePublication->modify('+7 days');
+
+    if ($dateAujourdhui >= $datePublication) {
+        $noteVisible = true;
+    } else {
+        $diff = $dateAujourdhui->diff($datePublication);
+        $joursRestants = $diff->days;
+    }
+}
 ?>
 
 <div class="container py-5">
-    <h2 class="fw-bold mb-4" style="color: var(--mmi-blue);">Mes Résultats de Stage</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-white py-3">
+                    <h4 class="fw-bold m-0" style="color: #0055A4;">Mes Notes</h4>
+                </div>
+                <div class="card-body p-4 text-center">
+                    
+                    <?php if (!$soutenance): ?>
+                        <p class="text-muted">Aucune note enregistrée pour <strong><?= htmlspecialchars($etudiant_id) ?></strong>.</p>
 
-    <?php if($note): ?>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card shadow-sm border-0 p-4 mb-4" style="border-radius: 15px;">
-                    <h5 class="text-muted mb-3">Note de Rapport</h5>
-                    <h1 class="display-4 fw-bold text-primary"><?= $note['note_rapport'] ?> <small class="fs-4 text-muted">/ 20</small></h1>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card shadow-sm border-0 p-4 mb-4" style="border-radius: 15px;">
-                    <h5 class="text-muted mb-3">Note de Soutenance</h5>
-                    <h1 class="display-4 fw-bold text-primary"><?= $note['note_soutenance'] ?> <small class="fs-4 text-muted">/ 20</small></h1>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="card card-pastel-blue p-4 text-center">
-                    <h4 class="mb-0">Moyenne Générale : <strong><?= number_format(($note['note_rapport'] + $note['note_soutenance'])/2, 2) ?> / 20</strong></h4>
+                    <?php elseif ($noteVisible): ?>
+                        <div class="row">
+                            <div class="col-6 border-end">
+                                <small class="text-muted d-block">Soutenance</small>
+                                <span class="display-6 fw-bold"><?= $soutenance['note_soutenance'] ?>/20</span>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted d-block">Rapport</small>
+                                <span class="display-6 fw-bold"><?= $soutenance['note_rapport'] ?>/20</span>
+                            </div>
+                        </div>
+                        <div class="alert alert-success mt-4">Notes publiées le <?= $datePublication->format('d/m/Y') ?></div>
+
+                    <?php else: ?>
+                        <div class="spinner-border text-primary mb-3"></div>
+                        <h5>Notes en attente de publication</h5>
+                        <p>Disponibles dans <strong><?= $joursRestants + 1 ?> jour(s)</strong>.</p>
+                        <p class="small text-muted">(Soutenance effectuée le <?= date('d/m/Y', strtotime($soutenance['date_soutenance'])) ?>)</p>
+                    <?php endif; ?>
+
                 </div>
             </div>
         </div>
-    <?php else: ?>
-        <div class="alert alert-info shadow-sm">
-            <i class="bi bi-clock-history"></i> Vos notes ne sont pas encore publiées. Elles le seront au plus tard une semaine après votre soutenance.
-        </div>
-    <?php endif; ?>
+    </div>
 </div>
 
 <?php include '../../includes/footer.php'; ?>

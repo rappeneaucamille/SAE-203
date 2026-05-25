@@ -17,10 +17,10 @@ require_once 'db.php';
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background-color: #0055A4 !important;">
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background-color: #2e4588 !important;">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="/index.php">
-            <img src="/SAE-203 - v2/assets/img/logo_univ.png" alt="Univ" height="40" class="me-2 rounded p-1">
+            <img src="/SAE-203 - v2/assets/img/logo_univ.png" alt="Univ" height="40" class="me-2 bg-white rounded p-1">
             <img src="/SAE-203 - v2/assets/img/logo_site.png" alt="Site" height="40" class="me-2 rounded p-1">
             <span class="fw-bold ms-2">MMI STAGES</span>
         </a>
@@ -44,21 +44,19 @@ require_once 'db.php';
                         <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/responsable/offres.php">Offres</a></li>
                         <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/responsable/validation.php">Validation</a></li>
                         <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/responsable/suivi_responsable.php">Suivi</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/responsable/liste_problemes.php">Problèmes</a></li>
                         <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/responsable/oraux_responsable.php">Soutenances</a></li>
                         <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/responsable/stats.php">Stats</a></li>
                         
                     <?php elseif ($_SESSION['role'] == 'Administrateur'): ?>
-                        <li class="nav-item">
-                            <a class="nav-link fw-bold text-warning" href="/SAE-203 - v2/pages/admin/gestion.php">
-                                <i class="bi bi-shield-lock"></i> ADMIN
-                            </a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link fw-bold text-warning" href="/SAE-203 - v2/pages/admin/gestion.php"><i class="bi bi-shield-lock"></i> ADMIN</a></li>
                         <li class="nav-item d-none d-lg-block"><span class="nav-link disabled text-white-50">|</span></li>
                         <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/responsable/dashboard.php">Dashboard</a></li>
                         <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/responsable/offres.php">Offres</a></li>
                         <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/responsable/validation.php">Validation</a></li>
                         <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/responsable/suivi_responsable.php">Suivi</a></li>
                         <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/responsable/oraux_responsable.php">Soutenances</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/admin/gestion_maitres.php"><i class="bi bi-people"></i> Maîtres de Stage</a></li>
                         <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/responsable/stats.php">Stats</a></li>
                     
                     <?php elseif ($_SESSION['role'] == 'Enseignant standard'): ?>
@@ -74,7 +72,7 @@ require_once 'db.php';
 
                     <li class="nav-item ms-lg-4">
                         <a class="btn btn-light btn-sm fw-bold" 
-                           style="color: #0055A4;" 
+                           style="color: #2e4588;" 
                            onclick="return confirm('Voulez-vous vraiment vous déconnecter ?')"
                            href="/SAE-203 - v2/auth/deconnexion.php">
                              Se déconnecter

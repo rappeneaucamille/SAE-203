@@ -5,18 +5,25 @@ include '../../includes/header.php';
 if (!isset($_SESSION['user_id'])) { header('Location: ../../index.php'); exit(); }
 $id_etud = $_SESSION['user_id'];
 
-// --- 1. TRAITEMENT : RECHERCHE PERSONNELLE ---
+// --- 1. TRAITEMENT : RECHERCHE PERSONNELLE (Avec infos Maître de Stage) ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_perso'])) {
     $entreprise = htmlspecialchars($_POST['ent_nom']);
     $sujet = htmlspecialchars($_POST['sujet']);
-    $details = "Dates: " . htmlspecialchars($_POST['dates_stage']) . " | Missions: " . htmlspecialchars($_POST['missions']);
+    
+    // On compile tout dans la colonne "reponses" pour que l'admin reçoive tout d'un coup
+    $details = "DATES : " . htmlspecialchars($_POST['dates_stage']) . "\n";
+    $details .= "MISSIONS : " . htmlspecialchars($_POST['missions']) . "\n";
+    $details .= "--- INFOS MAÎTRE DE STAGE ---\n";
+    $details .= "NOM : " . htmlspecialchars($_POST['mds_nom']) . "\n";
+    $details .= "PRÉNOM : " . htmlspecialchars($_POST['mds_prenom']) . "\n";
+    $details .= "EMAIL : " . htmlspecialchars($_POST['mds_email']);
     
     $stmt = $pdo->prepare("INSERT INTO Recherche (entreprise_contactee, offre_consultee, statut, date_recherche, reponses) VALUES (?, ?, 'En attente', NOW(), ?)");
     $stmt->execute([$entreprise, $sujet, $details]);
     $id_r = $pdo->lastInsertId();
     
     $pdo->prepare("INSERT INTO Effectuer (num_etudiant, id_recherche) VALUES (?, ?)")->execute([$id_etud, $id_r]);
-    echo "<div class='alert alert-success shadow-sm'>🚀 Recherche personnelle transmise !</div>";
+    echo "<div class='alert alert-success shadow-sm'>🚀 Recherche personnelle transmise avec les coordonnées du tuteur !</div>";
 }
 
 // --- 2. TRAITEMENT : MISE À JOUR COMPÉTENCES ---
@@ -62,10 +69,21 @@ $u_info = $u->fetch();
                 <div class="card-body">
                     <h6 class="fw-bold mb-3"><i class="bi bi-send-plus"></i> J'ai trouvé mon stage (Hors catalogue)</h6>
                     <form method="POST">
+                        <p class="small fw-bold text-muted mb-1">L'entreprise :</p>
                         <input type="text" name="ent_nom" class="form-control form-control-sm mb-2" placeholder="Nom de l'entreprise" required>
                         <input type="text" name="sujet" class="form-control form-control-sm mb-2" placeholder="Sujet du stage" required>
                         <input type="text" name="dates_stage" class="form-control form-control-sm mb-2" placeholder="Dates précises" required>
+                        
+                        <p class="small fw-bold text-muted mt-2 mb-1">Le Maître de Stage :</p>
+                        <div class="row g-2 mb-2">
+                            <div class="col-6"><input type="text" name="mds_nom" class="form-control form-control-sm" placeholder="Nom" required></div>
+                            <div class="col-6"><input type="text" name="mds_prenom" class="form-control form-control-sm" placeholder="Prénom" required></div>
+                        </div>
+                        <input type="email" name="mds_email" class="form-control form-control-sm mb-2" placeholder="Email du tuteur" required>
+
+                        <p class="small fw-bold text-muted mt-2 mb-1">Missions :</p>
                         <textarea name="missions" class="form-control form-control-sm mb-3" rows="2" placeholder="Missions et compétences..."></textarea>
+                        
                         <button type="submit" name="submit_perso" class="btn btn-dark btn-sm w-100 fw-bold">DÉCLARER AU RESPONSABLE</button>
                     </form>
                 </div>

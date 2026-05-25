@@ -18,7 +18,7 @@ $soutenances = $pdo->query($sql)->fetchAll();
 ?>
 
 <div class="container py-4">
-    <h2 class="fw-bold mb-4" style="color: #0055A4;">Saisie des Notes de Soutenance</h2>
+    <h2 class="fw-bold mb-4" style="color: #2e4588;">Saisie des Notes de Soutenance</h2>
 
     <?php if(isset($_GET['status']) && $_GET['status'] == 'success'): ?>
         <div class="alert alert-success">Note enregistrée avec succès !</div>

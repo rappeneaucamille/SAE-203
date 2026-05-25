@@ -18,7 +18,7 @@ if (isset($_POST['update_suivi'])) {
 ?>
 
 <div class="container py-4">
-    <h2 class="fw-bold mb-4" style="color: #0055A4;"><i class="bi bi- clipboard-check"></i> Suivi & Remontée des Problèmes</h2>
+    <h2 class="fw-bold mb-4" style="color: #2e4588;"><i class="bi bi- clipboard-check"></i> Suivi & Remontée des Problèmes</h2>
     
     <div class="card shadow-sm border-0">
         <div class="table-responsive">

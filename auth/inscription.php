@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 <div class="col-12 mt-5 mb-3 text-center">
                     <button type="submit" class="btn btn w-100 shadow" 
-                            style="background-color: #A7C7E7 !important; color: #000000 !important; border: 2px  #0055A4; display: block;">
+                            style="background-color: #A7C7E7 !important; color: #000000 !important; border: 2px  #2e4588; display: block;">
                         FINALISER MON INSCRIPTION
                     </button>
 
