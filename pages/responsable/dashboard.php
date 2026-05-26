@@ -57,7 +57,6 @@ $enRecherche = $totalEtudiants - $stagesValides;
 
                     <tbody>
                         <?php
-                        // Jointure entre Recherche, Effectuer et Etudiant selon ton SQL
                         $sql = "SELECT r.*, e.nom, e.prenom 
                                 FROM Recherche r
                                 JOIN Effectuer ef ON r.id_recherche = ef.id_recherche

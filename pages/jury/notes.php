@@ -9,7 +9,6 @@ if ($_SESSION['role'] !== 'Jury de soutenance' && $_SESSION['role'] !== 'Adminis
 }
 
 // On récupère les soutenances
-// ATTENTION : vérifie que 's.etudiant' correspond bien à 'e.identifiant' dans ta BDD
 $sql = "SELECT s.*, e.nom, e.prenom, e.promotion 
         FROM Soutenance s
         LEFT JOIN Etudiant e ON s.etudiant = e.identifiant 

@@ -11,7 +11,7 @@ if ($_SESSION['role'] !== 'Chef de département') {
 $promo_filter = isset($_GET['promo']) ? $_GET['promo'] : (isset($_SESSION['promotion_chef']) ? $_SESSION['promotion_chef'] : '');
 $where_clause = $promo_filter ? "WHERE e.promotion = :promo" : "";
 
-// 1. Nombre total d'étudiants (Inchangé)
+// 1. Nombre total d'étudiants 
 $sql_total = "SELECT COUNT(DISTINCT num_etudiant) FROM Etudiant " . ($promo_filter ? "WHERE promotion = :promo" : "");
 $stmt_total = $pdo->prepare($sql_total);
 if($promo_filter) $stmt_total->bindParam(':promo', $promo_filter);

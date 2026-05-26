@@ -23,8 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         // Préparation de l'insertion avec tous les champs demandés
-        // J'utilise les colonnes de ta table SQL (intitule, description, contact, remuneration, dates, lieu, competences)
-        // J'ajoute promotion et annee si tu as ces colonnes, sinon on les concatène dans la description
         $sql = "INSERT INTO Offre (intitule, description, contact, remuneration, dates, lieu, competences) 
                 VALUES (?, ?, ?, ?, ?, ?, ?)";
         

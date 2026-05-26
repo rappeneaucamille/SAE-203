@@ -81,7 +81,6 @@ $recherches = $pdo->query("SELECT r.*, e.nom, e.prenom FROM Recherche r JOIN Eff
                 }
                 $maitre_complet = trim($tuteur_prenom . " " . $tuteur_nom);
                 if(empty($maitre_complet)) $maitre_complet = "Non renseigné";
-                // -------------------------------------
             ?>
             <div class="col-12 mb-4">
                 <div class="card shadow-sm border-0" style="border-left: 5px solid #0d6efd;">

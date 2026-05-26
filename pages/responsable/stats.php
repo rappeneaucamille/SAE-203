@@ -17,7 +17,7 @@ $en_recherche = $total - $valides;
 
 $pourcentage = ($total > 0) ? round(($valides / $total) * 100) : 0;
 
-// 2. Récupération des statistiques sur les problèmes (ton attribut "probleme")
+// 2. Récupération des statistiques sur les problèmes
 $nb_problemes = $pdo->query("SELECT COUNT(*) FROM stage WHERE probleme IS NOT NULL AND probleme != ''")->fetchColumn();
 ?>
 

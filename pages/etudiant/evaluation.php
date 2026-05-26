@@ -8,7 +8,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'etudiant') {
     exit();
 }
 
-// On récupère l'identifiant (ex: rap@rap) qui est maintenant bien dans la session
+// On récupère l'identifiant
 $etudiant_id = $_SESSION['identifiant'] ?? ''; 
 
 $soutenance = false;

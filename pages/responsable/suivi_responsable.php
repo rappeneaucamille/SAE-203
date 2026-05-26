@@ -8,7 +8,7 @@ if ($_SESSION['role'] !== 'Responsable stage' && $_SESSION['role'] !== 'Administ
     exit();
 }
 
-// Mise à jour de la reformulation du problème par le responsable
+
 if (isset($_POST['update_suivi'])) {
     // On utilise ta colonne "probleme" existante
     $stmt = $pdo->prepare("UPDATE stage SET probleme = ?, convention_signee = ? WHERE id_stage = ?");
@@ -35,7 +35,6 @@ if (isset($_POST['update_suivi'])) {
                 </thead>
                 <tbody>
                     <?php
-                    // Requête avec tes vrais noms de colonnes
                     $sql = "SELECT s.id_stage, s.lieu, s.convention_signee, s.probleme, s.alerte_etudiant, e.nom, e.prenom 
                             FROM stage s 
                             JOIN etudiant e ON s.num_etudiant = e.num_etudiant";

@@ -5,7 +5,7 @@ include '../../includes/header.php';
 if (!isset($_SESSION['user_id'])) { header('Location: ../../index.php'); exit(); }
 $id_etud = $_SESSION['user_id'];
 
-// --- 1. TRAITEMENT : RECHERCHE PERSONNELLE (Avec infos Maître de Stage) ---
+// --- 1. TRAITEMENT : RECHERCHE PERSONNELLE ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_perso'])) {
     $entreprise = htmlspecialchars($_POST['ent_nom']);
     $sujet = htmlspecialchars($_POST['sujet']);
