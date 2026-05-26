@@ -90,7 +90,7 @@ $u_info = $u->fetch();
             </div>
 
             <div class="card shadow-sm border-0" style="background-color: var(--pastel-blue); border-radius: 15px;">
-                <div class="card-header bg-transparent fw-bold border-0 pt-3">📋 Mes contacts récents</div>
+                <div class="card-header bg-transparent fw-bold border-0 pt-3">📋 Mes candidatures</div>
                 <div class="card-body">
                     <?php foreach($demarches as $d): ?>
                         <div class="bg-white p-2 rounded mb-2 shadow-sm border-start border-4 border-primary">

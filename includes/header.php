@@ -20,9 +20,8 @@ require_once 'db.php';
 <nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background-color: #2e4588 !important;">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="/index.php">
-            <img src="/SAE-203 - v2/assets/img/logo_univ.png" alt="Univ" height="40" class="me-2 bg-white rounded p-1">
-            <img src="/SAE-203 - v2/assets/img/logo_site.png" alt="Site" height="40" class="me-2 rounded p-1">
-            <span class="fw-bold ms-2">MMI STAGES</span>
+            <img src="/SAE-203 - v2/assets/img/logo_univ2.png" alt="Univ" height="40" class="me-2 rounded p-1">
+            <img src="/SAE-203 - v2/assets/img/logo_site2.png" alt="Site" height="40" class="me-2 rounded p-1">
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">

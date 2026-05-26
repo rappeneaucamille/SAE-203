@@ -68,7 +68,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <input type="password" name="mdp_confirm" class="form-control" required>
                 </div>
             </div>
-            <button type="submit" class="btn btn-dark w-100 mt-2">Enregistrer le profil</button>
+            <button type="submit" class="btn w-100 mt-2" style="background-color: #A7C7E7; color: #000000; border: none;">
+                FINALISER MON INSCRIPTION
+            </button>            <p class="mt-3 text-center">
+                Déjà inscrit ? 
+                <a href="../index.php" style="color: #000000; font-weight: bold;">Se connecter</a>
+            </p>
         </form>
     </div>
 </div>

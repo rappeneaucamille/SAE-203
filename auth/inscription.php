@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <div class="container py-5">
     <div class="card mx-auto shadow-lg border-0" style="max-width: 850px; border-radius: 20px; overflow: hidden;">
         <div class="p-4 text-center" style="background-color: var(--mmi-blue);">
-            <h2 class="fw-bold mb-1" style="color: #000000 !important;">Rejoindre MMI Stages</h2>
+            <h2 class="fw-bold mb-1" style="color: #000000 !important;">Bienvenue sur ESUP-Stage</h2>
             <p style="color: #000000 !important; font-weight: 500;">Créez votre compte étudiant en quelques secondes</p>
         </div>
 

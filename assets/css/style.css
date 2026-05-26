@@ -1,7 +1,7 @@
 /* Variables de couleurs MMI Meaux */
 :root {
     /* Charte officielle */
-    --mmi-blue: #0055A4;      /* Le bleu foncé de base */
+    --mmi-blue: #2E4588;      /* Le bleu foncé de base */
     --mmi-dark: #212529;
     
     --pastel-blue: #E3F2FD;   /* Bleu très doux */
@@ -116,6 +116,3 @@ footer {
     margin-top: 4rem;
 }
 
-.btn-primary, .btn-lg {
-    color: #ffffff !important;
-}
