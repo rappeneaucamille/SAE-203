@@ -64,7 +64,7 @@ $u = $user->fetch();
 
                     <div class="col-12 mt-5">
                         <button type="submit" class="btn btn w-100 shadow" 
-                                style="background-color: #A7C7E7 !important; color: #000000 !important;; border: 2px  #5D5D81; display: block;">
+                                style="background-color: #2E4588 !important; color: #FFFFFF !important;; border: 2px  #5D5D81; display: block;">
                             SAUVEGARDER LES MODIFICATIONS
                         </button>
                     </div>

@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <input type="password" name="mdp_confirm" class="form-control" required>
                 </div>
             </div>
-            <button type="submit" class="btn w-100 mt-2" style="background-color: #A7C7E7; color: #000000; border: none;">
+            <button type="submit" class="btn w-100 mt-2" style="background-color: #2E4588; color: #FFFFFF; border: none;">
                 FINALISER MON INSCRIPTION
             </button>            <p class="mt-3 text-center">
                 Déjà inscrit ? 

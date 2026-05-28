@@ -163,7 +163,7 @@ $u_info = $u->fetch();
                                     <td class="text-center">
                                         <a href="postuler_traitement.php?id_offre=<?= $o['id_offre'] ?>" 
                                         class="btn btn-sm shadow-sm fw-bold px-3" 
-                                        style="background-color: #A7C7E7 !important; color: #000 !important; border: 1px solid #0055A4; min-height: 38px; display: flex; align-items: center; justify-content: center;">
+                                        style="background-color: #2E4588 !important; color: #FFFFFF !important; border: 1px solid #0055A4; min-height: 38px; display: flex; align-items: center; justify-content: center;">
                                             POSTULER
                                         </a>
                                     </td>

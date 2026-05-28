@@ -21,7 +21,7 @@ $enRecherche = $totalEtudiants - $stagesValides;
 
     <div class="row mb-5">
         <div class="col-md-4">
-            <div class="card text-center p-3 border-0 shadow-sm bg-primary text-white">
+            <div class="card text-center p-3 border-0 shadow-sm color: #424242 text-white">
                 <h6>Total Étudiants</h6>
                 <h2 class="fw-bold"><?= $totalEtudiants ?></h2>
             </div>
