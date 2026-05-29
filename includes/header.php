@@ -33,10 +33,10 @@ require_once 'db.php';
                 <?php if (isset($_SESSION['role'])): ?>
                     
                     <?php if ($_SESSION['role'] == 'etudiant'): ?>
-                        <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/etudiant/dashboard.php">Profil</a></li>
                         <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/etudiant/recherche.php">Recherche</a></li>
                         <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/etudiant/mon_stage.php">Mon Stage</a></li>
                         <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/etudiant/evaluation.php">Mes Evaluations</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/etudiant/dashboard.php">Profil</a></li>
 
                     <?php elseif ($_SESSION['role'] == 'Responsable stage'): ?>
                         <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/responsable/dashboard.php">Dashboard</a></li>

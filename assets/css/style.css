@@ -1,8 +1,7 @@
 /* Variables de couleurs MMI Meaux */
 :root {
     --mmi-blue: #2E4588;      
-    --mmi-dark: #212529;
-    
+    --mmi-dark: #212529;  
 }
 
 .card-pastel-blue {

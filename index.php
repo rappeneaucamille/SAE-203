@@ -5,7 +5,7 @@ require_once 'includes/db.php';
 if (isset($_SESSION['role'])) {
     switch ($_SESSION['role']) {
         case 'etudiant':
-            header('Location: pages/etudiant/dashboard.php');
+            header('Location: pages/etudiant/recherche.php');
             break;
         case 'Responsable stage':
             header('Location: pages/responsable/dashboard.php');

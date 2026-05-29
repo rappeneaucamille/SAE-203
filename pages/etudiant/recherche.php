@@ -53,11 +53,11 @@ $u_info = $u->fetch();
             <div class="card shadow-sm border-0 mb-4" style="border-radius: 15px; background-color: #f8f9fa;">
                 <div class="card-body">
                     <h6 class="fw-bold text-primary mb-3"><i class="bi bi-person-check"></i> Mon Profil d'Affectation</h6>
-                    <div class="p-2 mb-2 bg-white rounded border-start border-4 border-info">
+                    <div class="p-2 mb-2 bg-white rounded ">
                         <small class="text-muted d-block fw-bold">Compétences :</small>
                         <span class="small"><?= !empty($u_info['competences']) ? nl2br(htmlspecialchars($u_info['competences'])) : "<em>Non renseignées</em>" ?></span>
                     </div>
-                    <div class="p-2 mb-3 bg-white rounded border-start border-4 border-info">
+                    <div class="p-2 mb-3 bg-white rounded ">
                         <small class="text-muted d-block fw-bold">Préférences :</small>
                         <span class="small"><?= !empty($u_info['preferences']) ? nl2br(htmlspecialchars($u_info['preferences'])) : "<em>Non renseignées</em>" ?></span>
                     </div>
@@ -93,11 +93,13 @@ $u_info = $u->fetch();
                 <div class="card-header bg-transparent fw-bold border-0 pt-3">📋 Mes candidatures</div>
                 <div class="card-body">
                     <?php foreach($demarches as $d): ?>
-                        <div class="bg-white p-2 rounded mb-2 shadow-sm border-start border-4 border-primary">
+                        <div class="bg-white p-2 rounded mb-2 shadow-sm">
                             <div class="small fw-bold text-uppercase"><?= htmlspecialchars($d['entreprise_contactee']) ?></div>
                             <div class="small text-dark fw-bold"><i class="bi bi-file-text"></i> <?= htmlspecialchars($d['offre_consultee']) ?></div>
-                            <span class="badge <?= $d['statut'] == 'Validée' ? 'bg-success' : 'bg-warning text-dark' ?>" style="font-size:0.6rem;"><?= $d['statut'] ?></span>
-                        </div>
+                                <span class="badge text-dark" style="font-size:0.6rem; background-color: <?= ['Validée' => 'rgba(25,135,84,0.6)', 'Refusé' => 'rgba(201,43,38,0.6)', 'En attente' => 'rgba(255,193,7,0.6)'][$d['statut']] ?? 'rgba(108,117,125,0.6)' ?>;">
+                                    <?= $d['statut'] ?>
+                                </span>                  
+                            </div>
                     <?php endforeach; ?>
                 </div>
             </div>

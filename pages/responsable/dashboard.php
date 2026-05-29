@@ -21,19 +21,18 @@ $enRecherche = $totalEtudiants - $stagesValides;
 
     <div class="row mb-5">
         <div class="col-md-4">
-            <div class="card text-center p-3 border-0 shadow-sm color: #424242 text-white">
-                <h6>Total Étudiants</h6>
+            <div class="card text-center p-3 border-0 shadow-sm text-white" style="background-color: rgba(46, 69, 136, 0.6)">                <h6>Total Étudiants</h6>
                 <h2 class="fw-bold"><?= $totalEtudiants ?></h2>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card text-center p-3 border-0 shadow-sm bg-success text-white">
+            <div class="card text-center p-3 border-0 shadow-sm text-white" style="background-color: rgba(25, 135, 84, 0.6)">
                 <h6>Stages Validés</h6>
                 <h2 class="fw-bold"><?= $stagesValides ?></h2>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card text-center p-3 border-0 shadow-sm bg-warning text-dark">
+            <div class="card text-center p-3 border-0 shadow-sm text-white" style="background-color: rgba(28, 129, 253, 0.6)">
                 <h6>En recherche</h6>
                 <h2 class="fw-bold"><?= $enRecherche ?></h2>
             </div>
