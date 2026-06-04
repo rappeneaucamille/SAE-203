@@ -1,32 +1,32 @@
 <?php
 require_once 'includes/db.php';
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // REDIRECTION AUTOMATIQUE SI DÉJÀ CONNECTÉ
 if (isset($_SESSION['role'])) {
     switch ($_SESSION['role']) {
         case 'etudiant':
-            header('Location: pages/etudiant/recherche.php');
-            break;
-        case 'Responsable stage':
-            header('Location: pages/responsable/offres.php');
-            break;
-        case 'Administrateur': // Ajout/Vérification ici
-            header('Location: pages/admin/gestion.php');
-            break;
-        case 'Chef de département':
-            header('Location: pages/chef_dept/dashboard.php');
-            break;
-        case 'Enseignant standard':
-            header('Location: pages/enseignant/consultation.php');
-            break;
-        case 'Jury de soutenance':
-            header('Location: pages/jury/notes.php');
-            break;
+            header('Location: pages/etudiant/dashboard.php');
+            exit();
+        case 'Responsable stage': 
+            header('Location: pages/responsable/dashboard.php');
+            exit();
         case 'Administrateur':
             header('Location: pages/admin/gestion.php');
-            break;
+            exit();
+        case 'Chef de département':
+            header('Location: pages/chef_dept/dashboard.php');
+            exit();
+        case 'Enseignant standard': 
+            header('Location: pages/enseignant/consultation.php');
+            exit();
+        case 'Jury de soutenance': 
+            header('Location: pages/jury/notes.php');
+            exit();
     }
-    exit();
 }
 
 include 'includes/header.php';
@@ -43,12 +43,10 @@ include 'includes/header.php';
             <p class="text-muted">Gestion des Stages • 3 ans de formation</p>
         </div>
 
-        <?php if(isset($_GET['error'])): ?>
-            <?php if($_GET['error'] == '1'): ?>
-                <div class="alert alert-danger shadow-sm border-0">Identifiants incorrects.</div>
-            <?php elseif($_GET['error'] == 'not_validated'): ?>
-                <div class="alert alert-warning shadow-sm border-0">⚠️ Votre compte est en cours de traitement. Un administrateur doit le valider avant votre première connexion.</div>
-            <?php endif; ?>
+        <?php if(isset($_GET['error']) && $_GET['error'] == 'not_validated'): ?>
+            <div class="alert alert-warning">Votre compte est en attente de validation par un administrateur.</div>
+        <?php elseif(isset($_GET['error'])): ?>
+            <div class="alert alert-danger">Identifiants incorrects.</div>
         <?php endif; ?>
 
         <form action="auth/traitement_login.php" method="POST">
@@ -62,9 +60,9 @@ include 'includes/header.php';
             </div>
             <button type="submit" class="btn btn-mmi w-100 py-2">Se connecter</button>
         </form>
-        
+
         <hr class="my-4">
-        
+
         <div class="text-center">
             <p class="small mb-1">Pas encore de compte ?</p>
             <div class="d-flex justify-content-center gap-3">

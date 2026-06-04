@@ -1,7 +1,6 @@
 <?php
 require_once '../includes/db.php';
 
-// On démarre la session uniquement si elle n'est pas déjà lancée
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -24,7 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['user_id'] = $user['num_etudiant'];
         $_SESSION['identifiant'] = $user['identifiant']; 
         $_SESSION['role'] = 'etudiant';
-        header('Location: ../index.php');
+        
+        header('Location: ../index.php'); 
         exit();
     }
 
@@ -39,9 +39,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit();
         }
 
-        $_SESSION['user_id'] = $user['id_ens'];
+        $_SESSION['user_id'] = $user['id_ens'] ?? $user['identifiant'];
         $_SESSION['identifiant'] = $user['identifiant']; 
         $_SESSION['role'] = $user['fonctions'];
+
+        // On renvoie sur l'index qui gère le switch des rôles !
         header('Location: ../index.php');
         exit();
     }

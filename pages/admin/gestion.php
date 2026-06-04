@@ -2,7 +2,7 @@
 require_once '../../includes/db.php';
 include '../../includes/header.php';
 
-if ($_SESSION['role'] !== 'Administrateur') {
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Administrateur') {
     header('Location: ../../index.php');
     exit();
 }
@@ -11,7 +11,6 @@ if ($_SESSION['role'] !== 'Administrateur') {
 if (isset($_GET['validate_user']) && isset($_GET['type'])) {
     $id = $_GET['validate_user'];
     if ($_GET['type'] == 'prof') {
-        // On cherche par identifiant (casse insensible)
         $pdo->prepare("UPDATE Enseignant SET statut_compte = 'Validé' WHERE LOWER(identifiant) = LOWER(?)")->execute([$id]);
     } else {
         $pdo->prepare("UPDATE Etudiant SET statut_compte = 'Validé' WHERE num_etudiant = ?")->execute([$id]);
@@ -27,7 +26,6 @@ if (isset($_GET['delete_user']) && isset($_GET['type'])) {
         $pdo->prepare("DELETE FROM Enseignant WHERE LOWER(identifiant) = LOWER(?)")->execute([$id]);
     } else {
         $pdo->prepare("DELETE FROM stage WHERE num_etudiant = ?")->execute([$id]);
-        
         $pdo->prepare("DELETE FROM Etudiant WHERE num_etudiant = ?")->execute([$id]);
     }
     header('Location: gestion.php?status=deleted');
@@ -52,10 +50,13 @@ $etudiants = $pdo->query("SELECT * FROM Etudiant ORDER BY nom ASC")->fetchAll(PD
     </div>
 
     <?php if(isset($_GET['status']) && $_GET['status'] == 'validated'): ?>
-        <div class="alert alert-success shadow-sm border-0">Le compte a été validé avec succès ! Il peut maintenant se connecter.</div>
+        <div class="alert alert-success shadow-sm border-0">Le compte a été validé avec succès !</div>
     <?php endif; ?>
     <?php if(isset($_GET['status']) && $_GET['status'] == 'deleted'): ?>
         <div class="alert alert-danger shadow-sm border-0">Le compte a été supprimé.</div>
+    <?php endif; ?>
+    <?php if(isset($_GET['status']) && $_GET['status'] == 'added'): ?>
+        <div class="alert alert-success shadow-sm border-0">Le compte a été ajouté avec succès.</div>
     <?php endif; ?>
 
     <div class="mb-4">
@@ -65,7 +66,7 @@ $etudiants = $pdo->query("SELECT * FROM Etudiant ORDER BY nom ASC")->fetchAll(PD
     <div class="card shadow-sm mb-5 border-0">
         <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Enseignants & Staff</h5>
-            <a href="../../auth/inscription_enseignant.php" class="btn btn-success btn-sm">Ajouter Enseignant</a>
+            <a href="add_enseignant.php" class="btn btn-success btn-sm">Ajouter Enseignant</a>
         </div>
         <div class="table-responsive">
             <table class="table table-hover align-middle">
@@ -78,7 +79,6 @@ $etudiants = $pdo->query("SELECT * FROM Etudiant ORDER BY nom ASC")->fetchAll(PD
                 </thead>
                 <tbody id="adminTableProf">
                     <?php foreach($profs as $p): 
-                        // Protection blindée contre la casse de la colonne ou de la valeur en BDD
                         $raw_statut = $p['statut_compte'] ?? $p['Statut_compte'] ?? 'Validé';
                         $statut_prof = trim(strtolower($raw_statut));
                         $email_prof = $p['identifiant'] ?? $p['Identifiant'];
