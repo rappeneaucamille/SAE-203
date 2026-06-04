@@ -44,7 +44,11 @@ include 'includes/header.php';
         </div>
 
         <?php if(isset($_GET['error'])): ?>
-            <div class="alert alert-danger">Identifiants incorrects.</div>
+            <?php if($_GET['error'] == '1'): ?>
+                <div class="alert alert-danger shadow-sm border-0">Identifiants incorrects.</div>
+            <?php elseif($_GET['error'] == 'not_validated'): ?>
+                <div class="alert alert-warning shadow-sm border-0">⚠️ Votre compte est en cours de traitement. Un administrateur doit le valider avant votre première connexion.</div>
+            <?php endif; ?>
         <?php endif; ?>
 
         <form action="auth/traitement_login.php" method="POST">
