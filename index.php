@@ -8,7 +8,7 @@ if (isset($_SESSION['role'])) {
             header('Location: pages/etudiant/recherche.php');
             break;
         case 'Responsable stage':
-            header('Location: pages/responsable/dashboard.php');
+            header('Location: pages/responsable/offres.php');
             break;
         case 'Administrateur': // Ajout/Vérification ici
             header('Location: pages/admin/gestion.php');

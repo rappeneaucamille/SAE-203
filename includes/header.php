@@ -39,8 +39,8 @@ require_once 'db.php';
                         <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/etudiant/dashboard.php">Profil</a></li>
 
                     <?php elseif ($_SESSION['role'] == 'Responsable stage'): ?>
+                        <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/responsable/offres.php">Offres</a></li> 
                         <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/responsable/dashboard.php">Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/responsable/offres.php">Offres</a></li>
                         <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/responsable/validation.php">Validation</a></li>
                         <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/responsable/suivi_responsable.php">Suivi</a></li>
                         <li class="nav-item"><a class="nav-link" href="/SAE-203 - v2/pages/responsable/liste_problemes.php">Problèmes</a></li>
