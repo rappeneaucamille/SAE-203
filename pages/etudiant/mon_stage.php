@@ -22,6 +22,13 @@ $sql = "SELECT r.* FROM recherche r
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$id_etud]);
 $stage = $stmt->fetch();
+
+// --- AJOUT SYNCHRONISATION CONVENTION ---
+// On va chercher l'état réel de signature dans le Stage de l'étudiant
+$stmtConvention = $pdo->prepare("SELECT convention_signee FROM Stage WHERE num_etudiant = ?");
+$stmtConvention->execute([$id_etud]);
+$info_stage = $stmtConvention->fetch();
+$is_signee = ($info_stage && $info_stage['convention_signee'] === 'oui');
 ?>
 
 <div class="container py-5">
@@ -62,7 +69,11 @@ $stage = $stmt->fetch();
             </div>
 
             <div class="mt-4">
-                <span class="badge bg-success p-2 px-4">Convention en cours de signature</span>
+                <?php if($is_signee): ?>
+                    <span class="badge bg-success p-2 px-4 fs-6 shadow-sm"><i class="bi bi-file-earmark-check"></i> Convention signée par le responsable</span>
+                <?php else: ?>
+                    <span class="badge bg-warning text-dark p-2 px-4 fs-6 shadow-sm"><i class="bi bi-hourglass-split"></i> Convention en cours de signature</span>
+                <?php endif; ?>
             </div>
         </div>
     <?php else: ?>

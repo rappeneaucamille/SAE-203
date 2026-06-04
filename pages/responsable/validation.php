@@ -26,12 +26,18 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
             $data = $stmt->fetch();
 
             if ($data) {
-                // 2. On crée le STAGE officiel
-                $insertStage = $pdo->prepare("INSERT INTO Stage (num_etudiant, lieu, convention_signee) VALUES (?, ?, 'non')");
-                $insertStage->execute([
-                    $data['num_etudiant'], 
-                    $data['entreprise_contactee']
-                ]);
+                // On vérifie si un stage existe déjà pour éviter les doublons
+                $checkStage = $pdo->prepare("SELECT id_stage FROM Stage WHERE num_etudiant = ?");
+                $checkStage->execute([$data['num_etudiant']]);
+                
+                if (!$checkStage->fetch()) {
+                    // 2. On crée le STAGE officiel initialement à 'non'
+                    $insertStage = $pdo->prepare("INSERT INTO Stage (num_etudiant, lieu, convention_signee) VALUES (?, ?, 'non')");
+                    $insertStage->execute([
+                        $data['num_etudiant'], 
+                        $data['entreprise_contactee']
+                    ]);
+                }
 
                 // 3. On marque la recherche comme 'Validée'
                 $updateRecherche = $pdo->prepare("UPDATE Recherche SET statut = 'Validée' WHERE id_recherche = ?");
@@ -48,6 +54,22 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
     elseif ($_GET['action'] == 'refuser') {
         $pdo->prepare("UPDATE Recherche SET statut = 'Refusé' WHERE id_recherche = ?")->execute([$id_recherche]);
         echo "<div class='alert alert-warning m-3'>Dossier refusé.</div>";
+    }
+    // NOUVELLE ACTION : Permet au responsable de signer la convention à tout moment
+    elseif ($_GET['action'] == 'signer_convention') {
+        try {
+            $stmtEtud = $pdo->prepare("SELECT num_etudiant FROM Effectuer WHERE id_recherche = ?");
+            $stmtEtud->execute([$id_recherche]);
+            $liaison = $stmtEtud->fetch();
+            
+            if ($liaison) {
+                $updateConv = $pdo->prepare("UPDATE Stage SET convention_signee = 'oui' WHERE num_etudiant = ?");
+                $updateConv->execute([$liaison['num_etudiant']]);
+                echo "<div class='alert alert-success m-3 shadow-sm'>✍️ Convention marquée comme signée avec succès !</div>";
+            }
+        } catch (Exception $e) {
+            echo "<div class='alert alert-danger m-3'>Erreur lors de la signature : " . $e->getMessage() . "</div>";
+        }
     }
 }
 
@@ -113,7 +135,10 @@ $recherches = $pdo->query("SELECT r.*, e.nom, e.prenom FROM Recherche r JOIN Eff
                             <div class="col-md-2 text-center">
                                 <div class="d-grid gap-2">
                                     <a href="validation.php?action=valider&id=<?= $r['id_recherche'] ?>" class="btn btn-success fw-bold btn-sm">
-                                        <i class="bi bi-check-lg"></i> VALIDER
+                                        <i class="bi bi-check-lg"></i> VALIDER LE DOSSIER
+                                    </a>
+                                    <a href="validation.php?action=signer_convention&id=<?= $r['id_recherche'] ?>" class="btn btn-primary fw-bold btn-sm">
+                                        <i class="bi bi-pencil-fill"></i> SIGNER CONVENTION
                                     </a>
                                     <a href="validation.php?action=refuser&id=<?= $r['id_recherche'] ?>" class="btn btn-outline-danger btn-sm">
                                         <i class="bi bi-x-lg"></i> Refuser

@@ -2,104 +2,150 @@
 require_once '../../includes/db.php';
 include '../../includes/header.php';
 
-// SÉCURITÉ : On autorise le Responsable OU l'Admin
-if ($_SESSION['role'] !== 'Responsable stage' && $_SESSION['role'] !== 'Administrateur') {
+// Sécurité : Seul le Responsable stage peut accéder à cette page
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Responsable stage') {
     header('Location: ../../index.php');
     exit();
 }
 
+$status = null;
+$error = null;
 
-// Traitement de la planification
-if (isset($_POST['planifier'])) {
-    $id_stage = $_POST['id_stage'];
-    $date = $_POST['date'];
-    $salle = htmlspecialchars($_POST['salle']);
-    $id_jury = $_POST['id_jury'];
+// 1. RÉCUPÉRATION DES JURYS DEPUIS LA BDD (Selon ton ENUM exact)
+try {
+    $stmt = $pdo->prepare("SELECT identifiant, nom, prenom FROM enseignant WHERE fonctions = 'Jury de soutenance' ORDER BY nom ASC");
+    $stmt->execute();
+    $liste_jurys = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    $error = "Erreur lors du chargement des jurys : " . $e->getMessage();
+}
 
-    try {
-        $sql = "INSERT INTO soutenance (date_soutenance, salle, id_jury) VALUES (?, ?, ?)";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([$date, $salle, $id_jury]);
-        $id_sout = $pdo->lastInsertId();
+// 2. TRAITEMENT DU BOUTON "PROGRAMMER LA SOUTENANCE"
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['programmer'])) {
+    $etudiant_email = $_POST['etudiant_email']; // Identifiant (email) de l'étudiant
+    $date_soutenance = $_POST['date_soutenance'];
+    $heure_debut = $_POST['heure_debut'];
+    $heure_fin = $_POST['heure_fin'];
+    $salle = trim($_POST['salle']);
+    $jury1 = $_POST['jury1']; // identifiant du prof 1
+    $jury2 = $_POST['jury2']; // identifiant du prof 2
 
-        $update = $pdo->prepare("UPDATE stage SET id_soutenance = ? WHERE id_stage = ?");
-        $update->execute([$id_sout, $id_stage]);
-        
-        echo "<div class='alert alert-success'>Soutenance planifiée avec succès !</div>";
-    } catch (PDOException $e) {
-        echo "<div class='alert alert-danger'>Erreur : " . $e->getMessage() . "</div>";
+    if ($jury1 === $jury2) {
+        $error = "Le premier et le deuxième membre du jury doivent être des enseignants différents.";
+    } else {
+        try {
+            $pdo->beginTransaction();
+
+            // A. Insertion du binôme dans la table `jury`
+            $sqlJury = "INSERT INTO jury (enseignant_1, enseignant_2) VALUES (?, ?)";
+            $stmtJury = $pdo->prepare($sqlJury);
+            $stmtJury->execute([$jury1, $jury2]);
+            
+            // On récupère l'id_jury qui vient d'être créé automatiquement
+            $id_jury_genere = $pdo->lastInsertId();
+
+            // B. Insertion de la soutenance liée à cet id_jury
+            $sqlSoutenance = "INSERT INTO soutenance (date_soutenance, heure_debut, heure_fin, etudiant, salle, id_jury) 
+                              VALUES (?, ?, ?, ?, ?, ?)";
+            $stmtSoutenance = $pdo->prepare($sqlSoutenance);
+            $stmtSoutenance->execute([$date_soutenance, $heure_debut, $heure_fin, $etudiant_email, $salle, $id_jury_genere]);
+
+            $pdo->commit();
+            $status = "success";
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            $error = "Impossible de planifier la soutenance : " . $e->getMessage();
+        }
     }
 }
+
+// Récupération des étudiants (on utilise l'identifiant pour la table soutenance)
+$etudiants = $pdo->query("SELECT identifiant, nom, prenom FROM etudiant ORDER BY nom ASC")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<div class="container py-4">
-    <h2 class="mb-4 fw-bold"><i class="bi bi-calendar-event"></i> Organisation des Oraux</h2>
+<div class="container py-5">
+    <div class="card p-4 mx-auto shadow border-0" style="max-width: 600px;">
+        <h4 class="fw-bold mb-4" style="color: #0055A4;">Programmer une Soutenance</h4>
 
-    <div class="card p-4 shadow-sm mb-5 border-0">
-        <h5 class="fw-bold mb-3">Planifier un passage</h5>
-        <form method="POST" class="row g-3">
-            <div class="col-md-4">
-                <label class="form-label small fw-bold">Étudiant (ayant un stage validé)</label>
-                <select name="id_stage" class="form-select" required>
-                    <option value="">-- Sélectionner l'étudiant --</option>
-                    <?php 
-                    // On cherche les étudiants qui ont une ligne dans la table Stage
-                    $etudiants = $pdo->query("SELECT s.id_stage, e.nom, e.prenom FROM stage s JOIN etudiant e ON s.num_etudiant = e.num_etudiant");
-                    while($et = $etudiants->fetch()) {
-                        echo "<option value='{$et['id_stage']}'>{$et['nom']} {$et['prenom']}</option>";
-                    }
-                    ?>
+        <?php if ($status === 'success'): ?>
+            <div class="alert alert-success border-0 shadow-sm mb-3">La soutenance a été programmée avec succès !</div>
+        <?php endif; ?>
+
+        <?php if ($error): ?>
+            <div class="alert alert-danger border-0 shadow-sm mb-3"><?= $error ?></div>
+        <?php endif; ?>
+
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label fw-bold">Étudiant concerné</label>
+                <select name="etudiant_email" class="form-select" required>
+                    <option value="">-- Sélectionner un étudiant --</option>
+                    <?php foreach ($etudiants as $etud): ?>
+                        <option value="<?= htmlspecialchars($etud['identifiant']) ?>">
+                            <?= strtoupper(htmlspecialchars($etud['nom'])) ?> <?= htmlspecialchars($etud['prenom']) ?> (<?= htmlspecialchars($etud['identifiant']) ?>)
+                        </option>
+                    <?php endforeach; ?>
                 </select>
             </div>
-            <div class="col-md-3">
-                <label class="form-label small fw-bold">Date et Heure</label>
-                <input type="datetime-local" name="date" class="form-control" required>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Date de la soutenance</label>
+                <input type="date" name="date_soutenance" class="form-control" required>
             </div>
-            <div class="col-md-2">
-                <label class="form-label small fw-bold">Salle</label>
-                <input type="text" name="salle" class="form-control" placeholder="ex: B102">
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Heure de début</label>
+                    <input type="time" name="heure_debut" class="form-control" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Heure de fin</label>
+                    <input type="time" name="heure_fin" class="form-control" required>
+                </div>
             </div>
-            <div class="col-md-3">
-                <label class="form-label small fw-bold">Jury</label>
-                <select name="id_jury" class="form-select">
-                    <?php 
-                    // On récupère les jurys et le nom de l'enseignant associé
-                    $jurys = $pdo->query("SELECT j.id_jury, e.nom FROM jury j JOIN enseignant e ON j.id_ens = e.id_ens");
-                    while($j = $jurys->fetch()) {
-                        echo "<option value='{$j['id_jury']}'>Jury n°{$j['id_jury']} (M. {$j['nom']})</option>";
-                    }
-                    ?>
-                </select>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Salle</label>
+                <input type="text" name="salle" class="form-control" placeholder="Ex: B105" required>
             </div>
-            <div class="col-12 mt-3">
-                <button type="submit" name="planifier" class="btn btn-primary fw-bold px-4">ENREGISTRER LA CONVOCATION</button>
+
+            <hr class="my-4">
+            <h5 class="fw-bold mb-3 text-secondary">Sélection des Jurys</h5>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Membre Jury 1</label>
+                    <select name="jury1" class="form-select" required>
+                        <option value="">-- Sélectionner --</option>
+                        <?php foreach ($liste_jurys as $jury): ?>
+                            <option value="<?= htmlspecialchars($jury['identifiant']) ?>">
+                                <?= strtoupper(htmlspecialchars($jury['nom'])) ?> <?= htmlspecialchars($jury['prenom']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Membre Jury 2</label>
+                    <select name="jury2" class="form-select" required>
+                        <option value="">-- Sélectionner --</option>
+                        <?php foreach ($liste_jurys as $jury): ?>
+                            <option value="<?= htmlspecialchars($jury['identifiant']) ?>">
+                                <?= strtoupper(htmlspecialchars($jury['nom'])) ?> <?= htmlspecialchars($jury['prenom']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" name="programmer" class="btn btn-primary w-100 py-2 fw-bold">
+                    <i class="bi bi-calendar-plus"></i> Programmer la soutenance
+                </button>
+                <a href="dashboard.php" class="btn btn-light border w-100 py-2">Retour Dashboard</a>
             </div>
         </form>
     </div>
-
-    <div class="card p-4 shadow-sm border-0">
-        <h5 class="fw-bold mb-3">Planning des soutenances</h5>
-        <table class="table align-middle">
-            <thead class="table-light">
-                <tr><th>Date</th><th>Étudiant</th><th>Salle</th><th>Jury</th></tr>
-            </thead>
-            <tbody>
-                <?php 
-                $sql = "SELECT so.*, et.nom, et.prenom 
-                        FROM soutenance so 
-                        JOIN stage st ON so.id_soutenance = st.id_soutenance 
-                        JOIN etudiant et ON st.num_etudiant = et.num_etudiant 
-                        ORDER BY date_soutenance ASC";
-                $res = $pdo->query($sql)->fetchAll();
-                foreach($res as $p): ?>
-                <tr>
-                    <td><?= date('d/m/Y à H:i', strtotime($p['date_soutenance'])) ?></td>
-                    <td><strong><?= strtoupper($p['nom']) ?></strong> <?= $p['prenom'] ?></td>
-                    <td><span class="badge bg-light text-dark border"><?= $p['salle'] ?></span></td>
-                    <td>Jury <?= $p['id_jury'] ?></td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
 </div>
+
+<?php include '../../includes/footer.php'; ?>

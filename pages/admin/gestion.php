@@ -9,11 +9,15 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Administrateur') {
 
 // --- LOGIQUE DE VALIDATION DU COMPTE ---
 if (isset($_GET['validate_user']) && isset($_GET['type'])) {
-    $id = $_GET['validate_user'];
-    if ($_GET['type'] == 'prof') {
-        $pdo->prepare("UPDATE Enseignant SET statut_compte = 'Validé' WHERE LOWER(identifiant) = LOWER(?)")->execute([$id]);
+    $id = trim($_GET['validate_user']);
+    $type = trim($_GET['type']);
+    
+    if ($type === 'prof') {
+        $stmt = $pdo->prepare("UPDATE Enseignant SET statut_compte = 'Validé' WHERE LOWER(identifiant) = LOWER(?)");
+        $stmt->execute([$id]);
     } else {
-        $pdo->prepare("UPDATE Etudiant SET statut_compte = 'Validé' WHERE num_etudiant = ?")->execute([$id]);
+        $stmt = $pdo->prepare("UPDATE Etudiant SET statut_compte = 'Validé' WHERE num_etudiant = ?");
+        $stmt->execute([$id]);
     }
     header('Location: gestion.php?status=validated');
     exit();
@@ -21,8 +25,10 @@ if (isset($_GET['validate_user']) && isset($_GET['type'])) {
 
 // --- LOGIQUE DE SUPPRESSION ---
 if (isset($_GET['delete_user']) && isset($_GET['type'])) {
-    $id = $_GET['delete_user'];
-    if ($_GET['type'] == 'prof') {
+    $id = trim($_GET['delete_user']);
+    $type = trim($_GET['type']);
+    
+    if ($type === 'prof') {
         $pdo->prepare("DELETE FROM Enseignant WHERE LOWER(identifiant) = LOWER(?)")->execute([$id]);
     } else {
         $pdo->prepare("DELETE FROM stage WHERE num_etudiant = ?")->execute([$id]);
@@ -50,13 +56,13 @@ $etudiants = $pdo->query("SELECT * FROM Etudiant ORDER BY nom ASC")->fetchAll(PD
     </div>
 
     <?php if(isset($_GET['status']) && $_GET['status'] == 'validated'): ?>
-        <div class="alert alert-success shadow-sm border-0">Le compte a été validé avec succès !</div>
+        <div class="alert alert-success shadow-sm border-0">✅ Le compte a été validé avec succès !</div>
     <?php endif; ?>
     <?php if(isset($_GET['status']) && $_GET['status'] == 'deleted'): ?>
-        <div class="alert alert-danger shadow-sm border-0">Le compte a été supprimé.</div>
+        <div class="alert alert-danger shadow-sm border-0">❌ Le compte a été supprimé.</div>
     <?php endif; ?>
     <?php if(isset($_GET['status']) && $_GET['status'] == 'added'): ?>
-        <div class="alert alert-success shadow-sm border-0">Le compte a été ajouté avec succès.</div>
+        <div class="alert alert-success shadow-sm border-0">✅ Le compte a été ajouté avec succès.</div>
     <?php endif; ?>
 
     <div class="mb-4">
@@ -79,14 +85,16 @@ $etudiants = $pdo->query("SELECT * FROM Etudiant ORDER BY nom ASC")->fetchAll(PD
                 </thead>
                 <tbody id="adminTableProf">
                     <?php foreach($profs as $p): 
-                        $raw_statut = $p['statut_compte'] ?? $p['Statut_compte'] ?? 'Validé';
-                        $statut_prof = trim(strtolower($raw_statut));
+                        $raw_statut = $p['statut_compte'] ?? $p['Statut_compte'] ?? '';
                         $email_prof = $p['identifiant'] ?? $p['Identifiant'];
+                        
+                        // Condition ultra-souple : si le mot "attente" est présent dans le statut
+                        $is_prof_en_attente = (stripos($raw_statut, 'attente') !== false);
                     ?>
                     <tr>
                         <td>
                             <strong><?= strtoupper($p['nom']) ?></strong> <?= $p['prenom'] ?>
-                            <?php if($statut_prof === 'en attente'): ?>
+                            <?php if($is_prof_en_attente): ?>
                                 <span class="badge bg-warning text-dark ms-2">En attente</span>
                             <?php endif; ?>
                             <br><small><?= $email_prof ?></small>
@@ -94,8 +102,8 @@ $etudiants = $pdo->query("SELECT * FROM Etudiant ORDER BY nom ASC")->fetchAll(PD
                         <td><span class="badge bg-info text-dark"><?= $p['fonctions'] ?></span></td>
                         <td class="text-end">
                             <div class="d-flex justify-content-end gap-2">
-                                <?php if($statut_prof === 'en attente'): ?>
-                                    <a href="gestion.php?validate_user=<?= urlencode($email_prof) ?>&type=prof" class="btn btn-sm btn-success">Valider le compte</a>
+                                <?php if($is_prof_en_attente): ?>
+                                    <a href="gestion.php?validate_user=<?= urlencode($email_prof) ?>&type=prof" class="btn btn-sm btn-success fw-bold">Valider le compte</a>
                                 <?php endif; ?>
                                 <a href="edit_user.php?id=<?= urlencode($email_prof) ?>&type=prof" class="btn btn-sm btn-primary">Modifier</a>
                                 <a href="gestion.php?delete_user=<?= urlencode($email_prof) ?>&type=prof" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer ce prof ?')">Supprimer</a>
@@ -124,21 +132,23 @@ $etudiants = $pdo->query("SELECT * FROM Etudiant ORDER BY nom ASC")->fetchAll(PD
                 </thead>
                 <tbody id="adminTableEtud">
                     <?php foreach($etudiants as $e): 
-                        $raw_statut_etud = $e['statut_compte'] ?? $e['Statut_compte'] ?? 'Validé';
-                        $statut_etud = trim(strtolower($raw_statut_etud));
+                        $raw_statut_etud = $e['statut_compte'] ?? $e['Statut_compte'] ?? '';
+                        
+                        // Condition ultra-souple : si le mot "attente" est présent dans le statut
+                        $is_etud_en_attente = (stripos($raw_statut_etud, 'attente') !== false);
                     ?>
                     <tr>
                         <td>
                             <strong><?= strtoupper($e['nom']) ?></strong> <?= $e['prenom'] ?>
-                            <?php if($statut_etud === 'en attente'): ?>
+                            <?php if($is_etud_en_attente): ?>
                                 <span class="badge bg-warning text-dark ms-2">En attente</span>
                             <?php endif; ?>
                         </td>
                         <td><?= $e['promotion'] ?></td>
                         <td class="text-end">
                             <div class="d-flex justify-content-end gap-2">
-                                <?php if($statut_etud === 'en attente'): ?>
-                                    <a href="gestion.php?validate_user=<?= $e['num_etudiant'] ?>&type=etud" class="btn btn-sm btn-success">Valider le compte</a>
+                                <?php if($is_etud_en_attente): ?>
+                                    <a href="gestion.php?validate_user=<?= $e['num_etudiant'] ?>&type=etud" class="btn btn-sm btn-success fw-bold">Valider le compte</a>
                                 <?php endif; ?>
                                 <a href="edit_user.php?id=<?= $e['num_etudiant'] ?>&type=etud" class="btn btn-sm btn-primary">Modifier</a>
                                 <a href="gestion.php?delete_user=<?= $e['num_etudiant'] ?>&type=etud" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer cet étudiant ?')">Supprimer</a>

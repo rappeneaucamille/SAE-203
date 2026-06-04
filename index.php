@@ -9,7 +9,7 @@ if (session_status() === PHP_SESSION_NONE) {
 if (isset($_SESSION['role'])) {
     switch ($_SESSION['role']) {
         case 'etudiant':
-            header('Location: pages/etudiant/dashboard.php');
+            header('Location: pages/etudiant/recherche.php');
             exit();
         case 'Responsable stage': 
             header('Location: pages/responsable/dashboard.php');

@@ -34,8 +34,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_skills'])) {
     header("Location: recherche.php"); exit();
 }
 
-// --- 3. RÉCUPÉRATION DES DONNÉES ---
-$offres = $pdo->query("SELECT * FROM Offre ORDER BY id_offre DESC")->fetchAll();
+// --- 3. GESTION DU MOTEUR DE RECHERCHE ET DES FILTRES ---
+$search_text = isset($_GET['search_text']) ? trim($_GET['search_text']) : '';
+$filter_lieu = isset($_GET['filter_lieu']) ? trim($_GET['filter_lieu']) : '';
+$filter_remun = isset($_GET['filter_remun']) ? trim($_GET['filter_remun']) : '';
+
+// Construction dynamique de la requête SQL
+$queryStr = "SELECT * FROM Offre WHERE 1=1";
+$params = [];
+
+if ($search_text !== '') {
+    $queryStr .= " AND (intitule LIKE ? OR contact LIKE ? OR description LIKE ?)";
+    $params[] = "%$search_text%";
+    $params[] = "%$search_text%";
+    $params[] = "%$search_text%";
+}
+
+if ($filter_lieu !== '') {
+    $queryStr .= " AND lieu = ?";
+    $params[] = $filter_lieu;
+}
+
+if ($filter_remun === 'gratuit') {
+    $queryStr .= " AND (remuneration IS NULL OR remuneration = 0)";
+} elseif ($filter_remun === 'remunere') {
+    $queryStr .= " AND remuneration > 0";
+}
+
+$queryStr .= " ORDER BY id_offre DESC";
+
+$stmtOffres = $pdo->prepare($queryStr);
+$stmtOffres->execute($params);
+$offres = $stmtOffres->fetchAll();
+
+// Récupération des localisations distinctes existantes en BDD pour alimenter le filtre automatiquement
+$lieux_disponibles = $pdo->query("SELECT DISTINCT lieu FROM Offre WHERE lieu IS NOT NULL AND lieu != '' ORDER BY lieu ASC")->fetchAll(PDO::FETCH_COLUMN);
+
+// --- 4. RÉCUPÉRATION DES DONNÉES ÉTUDIANT ---
 $mesDemarches = $pdo->prepare("SELECT r.* FROM Recherche r JOIN Effectuer ef ON r.id_recherche = ef.id_recherche WHERE ef.num_etudiant = ? ORDER BY r.date_recherche DESC");
 $mesDemarches->execute([$id_etud]);
 $demarches = $mesDemarches->fetchAll();
@@ -65,7 +100,7 @@ $u_info = $u->fetch();
                 </div>
             </div>
 
-            <div class="card shadow-sm border-0 mb-4" style="background-color: var(--pastel-purple); border-radius: 15px;">
+            <div class="card shadow-sm border-0 mb-4" style="background-color: rgba(230, 220, 255, 0.7); border-radius: 15px;">
                 <div class="card-body">
                     <h6 class="fw-bold mb-3"><i class="bi bi-send-plus"></i> J'ai trouvé mon stage (Hors catalogue)</h6>
                     <form method="POST">
@@ -89,7 +124,7 @@ $u_info = $u->fetch();
                 </div>
             </div>
 
-            <div class="card shadow-sm border-0" style="background-color: var(--pastel-blue); border-radius: 15px;">
+            <div class="card shadow-sm border-0" style="background-color: rgba(215, 235, 255, 0.7); border-radius: 15px;">
                 <div class="card-header bg-transparent fw-bold border-0 pt-3">📋 Mes candidatures</div>
                 <div class="card-body">
                     <?php foreach($demarches as $d): ?>
@@ -106,9 +141,49 @@ $u_info = $u->fetch();
         </div>
 
         <div class="col-lg-8">
+            
+            <div class="card shadow-sm border-0 mb-4" style="border-radius: 15px;">
+                <div class="card-body p-3">
+                    <form method="GET" action="recherche.php" class="row g-2 align-items-end">
+                        
+                        <div class="col-md-5">
+                            <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-search"></i> Mots-clés (Poste, Entreprise...)</label>
+                            <input type="text" name="search_text" class="form-control form-control-sm" placeholder="Ex: Développeur, Apple..." value="<?= htmlspecialchars($search_text) ?>">
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-geo-alt"></i> Localisation</label>
+                            <select name="filter_lieu" class="form-select form-select-sm">
+                                <option value="">Tous les lieux</option>
+                                <?php foreach($lieux_disponibles as $l): ?>
+                                    <option value="<?= htmlspecialchars($l) ?>" <?= $filter_lieu === $l ? 'selected' : '' ?>><?= htmlspecialchars($l) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-currency-euro"></i> Rémunération</label>
+                            <select name="filter_remun" class="form-select form-select-sm">
+                                <option value="">Toutes</option>
+                                <option value="remunere" <?= $filter_remun === 'remunere' ? 'selected' : '' ?>>Gratification payée</option>
+                                <option value="gratuit" <?= $filter_remun === 'gratuit' ? 'selected' : '' ?>>Non gratifié / Non spécifié</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-1 d-flex gap-1">
+                            <button type="submit" class="btn btn-primary btn-sm w-100" title="Filtrer"><i class="bi bi-funnel-fill"></i></button>
+                            <?php if($search_text !== '' || $filter_lieu !== '' || $filter_remun !== ''): ?>
+                                <a href="recherche.php" class="btn btn-outline-secondary btn-sm" title="Réinitialiser"><i class="bi bi-arrow-clockwise"></i></a>
+                            <?php endif; ?>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <div class="card shadow-sm border-0" style="border-radius: 15px;">
-                <div class="card-header bg-white py-3 border-0">
-                    <h5 class="mb-0 fw-bold text-primary"><i class="bi bi-search"></i> Catalogue des Offres MMI</h5>
+                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold text-primary"><i class="bi bi-journal-bookmark-fill"></i> Catalogue des Offres MMI</h5>
+                    <span class="badge bg-light text-dark border fw-normal"><?= count($offres) ?> offre(s) trouvée(s)</span>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -122,55 +197,64 @@ $u_info = $u->fetch();
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach($offres as $o): ?>
-                                <tr>
-                                    <td style="min-width: 200px;">
-                                        <div class="fw-bold text-dark" style="font-size: 1.1rem;">
-                                            <?= !empty($o['intitule']) ? htmlspecialchars($o['intitule']) : '<span class="text-muted italic">Intitulé non renseigné</span>' ?>
-                                        </div>
-                                        <div class="text-primary fw-bold small mt-1">
-                                            <i class="bi bi-building"></i> 
-                                            <?= !empty($o['contact']) ? htmlspecialchars($o['contact']) : '<span class="text-muted">Entreprise non renseignée</span>' ?>
-                                        </div>
-                                        <div class="text-muted small">
-                                            <i class="bi bi-geo-alt"></i> 
-                                            <?= !empty($o['lieu']) ? htmlspecialchars($o['lieu']) : '<span class="text-muted">Lieu non renseigné</span>' ?>
-                                        </div>
-                                    </td>
+                                <?php if(empty($offres)): ?>
+                                    <tr>
+                                        <td colspan="4" class="text-center py-5 text-muted">
+                                            <i class="bi bi-emoji-frown fs-3 d-block mb-2"></i>
+                                            Aucune offre ne correspond à vos critères de recherche.
+                                        </td>
+                                    </tr>
+                                <?php else: ?>
+                                    <?php foreach($offres as $o): ?>
+                                    <tr>
+                                        <td style="min-width: 200px;">
+                                            <div class="fw-bold text-dark" style="font-size: 1.1rem;">
+                                                <?= !empty($o['intitule']) ? htmlspecialchars($o['intitule']) : '<span class="text-muted italic">Intitulé non renseigné</span>' ?>
+                                            </div>
+                                            <div class="text-primary fw-bold small mt-1">
+                                                <i class="bi bi-building"></i> 
+                                                <?= !empty($o['contact']) ? htmlspecialchars($o['contact']) : '<span class="text-muted">Entreprise non renseignée</span>' ?>
+                                            </div>
+                                            <div class="text-muted small">
+                                                <i class="bi bi-geo-alt"></i> 
+                                                <?= !empty($o['lieu']) ? htmlspecialchars($o['lieu']) : '<span class="text-muted">Lieu non renseigné</span>' ?>
+                                            </div>
+                                        </td>
 
-                                    <td>
-                                        <div class="small mb-2">
-                                            <strong class="text-dark">Missions :</strong><br>
-                                            <?= !empty($o['description']) ? nl2br(htmlspecialchars($o['description'])) : '<span class="text-muted">Aucune description fournie</span>' ?>
-                                        </div>
-                                        <div class="small">
-                                            <strong class="text-dark">Compétences requises :</strong><br>
-                                            <?= !empty($o['competences']) ? htmlspecialchars($o['competences']) : '<span class="text-muted">Non renseignées</span>' ?>
-                                        </div>
-                                    </td>
+                                        <td>
+                                            <div class="small mb-2">
+                                                <strong class="text-dark">Missions :</strong><br>
+                                                <?= !empty($o['description']) ? nl2br(htmlspecialchars($o['description'])) : '<span class="text-muted">Aucune description fournie</span>' ?>
+                                            </div>
+                                            <div class="small">
+                                                <strong class="text-dark">Compétences requises :</strong><br>
+                                                <?= !empty($o['competences']) ? htmlspecialchars($o['competences']) : '<span class="text-muted">Non renseignées</span>' ?>
+                                            </div>
+                                        </td>
 
-                                    <td style="min-width: 180px;" class="small">
-                                        <div class="mb-2">
-                                            <i class="bi bi-calendar3"></i> <strong>Dates :</strong><br>
-                                            <?= !empty($o['dates']) ? htmlspecialchars($o['dates']) : '<span class="text-muted">Non précisées</span>' ?>
-                                        </div>
-                                        <div>
-                                            <i class="bi bi-currency-euro"></i> <strong>Rémunération :</strong><br>
-                                            <span class="<?= !empty($o['remuneration']) ? 'text-success fw-bold' : 'text-muted' ?>">
-                                                <?= !empty($o['remuneration']) ? htmlspecialchars($o['remuneration']) : "Non renseignée" ?>
-                                            </span>
-                                        </div>
-                                    </td>
+                                        <td style="min-width: 180px;" class="small">
+                                            <div class="mb-2">
+                                                <i class="bi bi-calendar3"></i> <strong>Dates :</strong><br>
+                                                <?= !empty($o['dates']) ? htmlspecialchars($o['dates']) : '<span class="text-muted">Non précisées</span>' ?>
+                                            </div>
+                                            <div>
+                                                <i class="bi bi-currency-euro"></i> <strong>Rémunération :</strong><br>
+                                                <span class="<?= (!empty($o['remuneration']) && $o['remuneration'] > 0) ? 'text-success fw-bold' : 'text-muted' ?>">
+                                                    <?= (!empty($o['remuneration']) && $o['remuneration'] > 0) ? htmlspecialchars($o['remuneration']) . ' €' : "Non renseignée" ?>
+                                                </span>
+                                            </div>
+                                        </td>
 
-                                    <td class="text-center">
-                                        <a href="postuler_traitement.php?id_offre=<?= $o['id_offre'] ?>" 
-                                        class="btn btn-sm shadow-sm fw-bold px-3" 
-                                        style="background-color: #2E4588 !important; color: #FFFFFF !important; border: 1px solid #0055A4; min-height: 38px; display: flex; align-items: center; justify-content: center;">
-                                            POSTULER
-                                        </a>
-                                    </td>
-                                </tr>
-                                <?php endforeach; ?>
+                                        <td class="text-center">
+                                            <a href="postuler_traitement.php?id_offre=<?= $o['id_offre'] ?>" 
+                                            class="btn btn-sm shadow-sm fw-bold px-3" 
+                                            style="background-color: #2E4588 !important; color: #FFFFFF !important; border: 1px solid #0055A4; min-height: 38px; display: flex; align-items: center; justify-content: center;">
+                                                POSTULER
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
