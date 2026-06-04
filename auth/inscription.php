@@ -6,10 +6,14 @@ $message = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $num = $_POST['num_etudiant'];
+    $email = trim($_POST['email']); // On récupère et nettoie l'email
     $mdp = $_POST['mdp'];
     $mdp_conf = $_POST['mdp_conf'];
 
-    if ($mdp !== $mdp_conf) {
+    // --- VÉRIFICATION DU FORMAT DE L'EMAIL ÉTUDIANT ---
+    if (!str_ends_with($email, '@edu.univ-eiffel.fr')) {
+        $message = "<div class='alert alert-danger shadow-sm'>Erreur : Vous devez utiliser votre adresse email universitaire (@edu.univ-eiffel.fr).</div>";
+    } elseif ($mdp !== $mdp_conf) {
         $message = "<div class='alert alert-danger shadow-sm'>Les mots de passe ne correspondent pas.</div>";
     } else {
         $check = $pdo->prepare("SELECT num_etudiant FROM Etudiant WHERE num_etudiant = ?");
@@ -23,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([
-                    $num, $_POST['email'], $hash, strtoupper($_POST['nom']), $_POST['prenom'], 
+                    $num, $email, $hash, strtoupper($_POST['nom']), $_POST['prenom'], 
                     $_POST['tel'], $_POST['date_naiss'], $_POST['lieu_naiss'], $_POST['adresse'],
                     $_POST['promotion'], $_POST['groupe_td'], $_POST['groupe_tp']
                 ]);
@@ -66,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="col-md-4"><label class="form-label fw-bold">Groupe TD</label><select name="groupe_td" id="tdInscr" class="form-select shadow-sm"></select></div>
                 <div class="col-md-4"><label class="form-label fw-bold">Groupe TP</label><select name="groupe_tp" id="tpInscr" class="form-select shadow-sm"></select></div>
 
-                <div class="col-md-6"><label class="form-label fw-bold">Email</label><input type="email" name="email" class="form-control shadow-sm" required></div>
+                <div class="col-md-6"><label class="form-label fw-bold">Email Universitaire</label><input type="email" name="email" class="form-control shadow-sm" placeholder="prenom.nom@edu.univ-eiffel.fr" required></div>
                 <div class="col-md-6"><label class="form-label fw-bold">Téléphone</label><input type="tel" name="tel" class="form-control shadow-sm"></div>
 
                 <div class="col-md-6"><label class="form-label fw-bold">Mot de passe</label><input type="password" name="mdp" class="form-control shadow-sm" required></div>

@@ -2,19 +2,22 @@
 require_once '../includes/db.php';
 include '../includes/header.php';
 
+$message_pro = "";
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = htmlspecialchars($_POST['email']);
+    $email = trim($_POST['email']); // On récupère et nettoie l'email
     $mdp = $_POST['mdp'];
-    $mdp_confirm = $_POST['mdp_confirm']; // On récupère la confirmation
+    $mdp_confirm = $_POST['mdp_confirm']; 
     $nom = htmlspecialchars($_POST['nom']);
     $prenom = htmlspecialchars($_POST['prenom']);
     $fonction = $_POST['fonction'];
 
-    // Vérification : les mots de passe correspondent-ils ?
-    if ($mdp !== $mdp_confirm) {
-        echo "<div class='alert alert-danger'>Erreur : Les mots de passe ne sont pas identiques.</div>";
+    // --- VÉRIFICATION DU FORMAT DE L'EMAIL PROFESSIONNEL ---
+    if (!str_ends_with($email, '@univ-eiffel.fr')) {
+        $message_pro = "<div class='alert alert-danger'>Erreur : Vous devez utiliser une adresse email professionnelle de l'université (@univ-eiffel.fr).</div>";
+    } elseif ($mdp !== $mdp_confirm) {
+        $message_pro = "<div class='alert alert-danger'>Erreur : Les mots de passe ne sont pas identiques.</div>";
     } else {
-        // Si c'est bon, on hash le mot de passe
         $mdp_hashed = password_hash($mdp, PASSWORD_DEFAULT);
 
         $sql = "INSERT INTO Enseignant (identifiant, pwd, nom, prenom, fonctions) VALUES (?, ?, ?, ?, ?)";
@@ -22,9 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         try {
             $stmt->execute([$email, $mdp_hashed, $nom, $prenom, $fonction]);
-            echo "<div class='alert alert-success'>Compte créé ! <a href='../index.php'>Se connecter</a></div>";
+            $message_pro = "<div class='alert alert-success'>Compte créé ! <a href='../index.php'>Se connecter</a></div>";
         } catch(Exception $e) {
-            echo "<div class='alert alert-danger'>Erreur : Email déjà utilisé.</div>";
+            $message_pro = "<div class='alert alert-danger'>Erreur : Email déjà utilisé.</div>";
         }
     }
 }
@@ -33,6 +36,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <div class="container py-5">
     <div class="card p-4 mx-auto shadow" style="max-width: 600px; border-top: 5px solid var(--dark-grey);">
         <h2 class="text-center mb-4">Espace Enseignant & Administration</h2>
+        
+        <?= $message_pro ?>
+        
         <form method="POST">
             <div class="row">
                 <div class="col-md-6 mb-3">
@@ -56,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             <div class="mb-3">
                 <label class="form-label fw-bold">Email Professionnel</label>
-                <input type="email" name="email" class="form-control" required>
+                <input type="email" name="email" class="form-control" placeholder="prenom.nom@univ-eiffel.fr" required>
             </div>
             <div class="row">
                 <div class="col-md-6 mb-3">
@@ -70,7 +76,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             <button type="submit" class="btn w-100 mt-2" style="background-color: #2E4588; color: #FFFFFF; border: none;">
                 FINALISER MON INSCRIPTION
-            </button>            <p class="mt-3 text-center">
+            </button>            
+            <p class="mt-3 text-center">
                 Déjà inscrit ? 
                 <a href="../index.php" style="color: #000000; font-weight: bold;">Se connecter</a>
             </p>
