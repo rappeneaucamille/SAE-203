@@ -83,7 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <option value="Jury de soutenance">Jury de soutenance</option>
                     <option value="Responsable stage">Responsable stage</option>
                     <option value="Chef de département">Chef de département</option>
-                    <option value="Administrateur">Administrateur</option>
                 </select>
             </div>
             
