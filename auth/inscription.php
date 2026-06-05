@@ -39,14 +39,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
+<link rel="stylesheet" href="../assets/css/style.css">
+
 <div class="container py-5">
-    <div class="card mx-auto shadow-lg border-0" style="max-width: 850px; border-radius: 20px; overflow: hidden;">
-        <div class="p-4 text-center" style="background-color: var(--mmi-blue);">
-            <h2 class="fw-bold mb-1" style="color: #000000 !important;">Bienvenue sur ESUP-Stage</h2>
-            <p style="color: #000000 !important; font-weight: 500;">Créez votre compte étudiant en quelques secondes</p>
+    <div class="card mx-auto shadow-lg border-0" style="max-width: 850px; border-radius: 20px; overflow: hidden; background-color: #ffffff !important;">
+        
+        <div class="p-4 text-center" style="background-color: #ffffff !important; background: #ffffff !important; border-bottom: 1px solid #e9ecef;">
+            <h2 class="text-center fw-normal" style="font-weight: 500 !important; color: #212529 !important; font-family: sans-serif !important; letter-spacing: normal !important; margin-bottom: 5px !important;">
+                Bienvenue sur ESUP-Stage
+            </h2>
+            <p class="text-muted m-0" style="color: #6c757d !important; font-weight: normal !important;">Créez votre compte étudiant en quelques secondes</p>
         </div>
 
-        <div class="card-body p-5" style="background-color: var(--pastel-blue);">
+        <div class="card-body p-5" style="background-color: #ffffff !important;">
             <?= $message ?>
             <form method="POST" class="row g-4">
                 <div class="col-md-4"><label class="form-label fw-bold">N° Étudiant</label><input type="number" name="num_etudiant" class="form-control shadow-sm" required></div>
@@ -76,8 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="col-md-6"><label class="form-label fw-bold">Confirmation</label><input type="password" name="mdp_conf" class="form-control shadow-sm" required></div>
 
                 <div class="col-12 mt-5 mb-3 text-center">
-                    <button type="submit" class="btn btn w-100 shadow" 
-                            style="background-color: #2E4588 !important; color: #FFFFFF !important; border: 2px  #2e4588; display: block;">
+                    <button type="submit" class="btn w-100 shadow" 
+                            style="background-color: #2E4588 !important; color: #FFFFFF !important; border: none; display: block; height: 45px; font-weight: bold;">
                         FINALISER MON INSCRIPTION
                     </button>
 

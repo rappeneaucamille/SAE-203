@@ -33,10 +33,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 ?>
 
+<link rel="stylesheet" href="../assets/css/style.css">
 
 <div class="container py-5">
-    <div class="card p-4 mx-auto shadow" style="max-width: 600px; border-top: 5px solid var(--dark-grey);">
-        <h2 class="text-center mb-4">Espace Enseignant & Administration</h2>
+    <div class="card p-4 mx-auto shadow" style="max-width: 600px; border-top: 5px solid var(--dark-grey); background-color: #ffffff;">
+        
+        <h2 class="text-center mb-4 fw-normal" style="font-weight: 500 !important; color: #212529 !important; font-family: sans-serif !important; letter-spacing: normal !important;">
+            Espace Enseignant & Administration
+        </h2>
         
         <?= $message_pro ?>
         

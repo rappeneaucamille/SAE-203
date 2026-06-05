@@ -25,20 +25,22 @@ $enRecherche = $totalEtudiants - $stagesValides;
     <div class="row g-4 mb-5">
         <div class="col-md-4">
             <div class="card p-4 border-0 text-white shadow-sm text-center d-flex flex-column align-items-center justify-content-center" style="background-color: #7F8EB3; border-radius: 20px; min-height: 140px;">
-                <span class="text-uppercase fw-bold opacity-75" style="font-size: 0.8rem;  color: white !important;letter-spacing: 0.8px;">Total Étudiants</span>
-                <h2 class="fw-bold mt-2 mb-0" style="font-size: 2.8rem; letter-spacing: -1px;"><?= $totalEtudiants ?></h2>
+                <span class="text-uppercase fw-bold opacity-75" style="font-size: 0.8rem; letter-spacing: 0.8px; color: #FFFFFF !important;">Total Étudiants</span>
+                <h2 class="fw-bold mt-2 mb-0" style="font-size: 2.8rem; letter-spacing: -1px; color: #FFFFFF !important;"><?= $totalEtudiants ?></h2>
             </div>
         </div>
+        
         <div class="col-md-4">
             <div class="card p-4 border-0 text-white shadow-sm text-center d-flex flex-column align-items-center justify-content-center" style="background-color: #71B999; border-radius: 20px; min-height: 140px;">
-                <span class="text-uppercase fw-bold opacity-75" style="font-size: 0.8rem; letter-spacing: 0.8px;">Stages Validés</span>
-                <h2 class="fw-bold mt-2 mb-0" style="font-size: 2.8rem; letter-spacing: -1px;"><?= $stagesValides ?></h2>
+                <span class="text-uppercase fw-bold opacity-75" style="font-size: 0.8rem; letter-spacing: 0.8px; color: #FFFFFF !important;">Stages Validés</span>
+                <h2 class="fw-bold mt-2 mb-0" style="font-size: 2.8rem; letter-spacing: -1px; color: #FFFFFF !important;"><?= $stagesValides ?></h2>
             </div>
         </div>
+        
         <div class="col-md-4">
             <div class="card p-4 border-0 text-white shadow-sm text-center d-flex flex-column align-items-center justify-content-center" style="background-color: #F5CD5F; border-radius: 20px; min-height: 140px;">
-                <span class="text-uppercase fw-bold opacity-75" style="font-size: 0.8rem; letter-spacing: 0.8px;">En recherche</span>
-                <h2 class="fw-bold mt-2 mb-0" style="font-size: 2.8rem; letter-spacing: -1px;"><?= $enRecherche ?></h2>
+                <span class="text-uppercase fw-bold opacity-75" style="font-size: 0.8rem; letter-spacing: 0.8px; color: #FFFFFF !important;">En recherche</span>
+                <h2 class="fw-bold mt-2 mb-0" style="font-size: 2.8rem; letter-spacing: -1px; color: #FFFFFF !important;"><?= $enRecherche ?></h2>
             </div>
         </div>
     </div>

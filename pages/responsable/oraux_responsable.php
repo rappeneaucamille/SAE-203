@@ -60,6 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['programmer'])) {
 $etudiants = $pdo->query("SELECT identifiant, nom, prenom FROM etudiant ORDER BY nom ASC")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
+<link rel="stylesheet" href="../../assets/css/style.css">
+
 <div class="container py-5" style="max-width: 1000px;">
     
     <h1 class="fw-bold mb-5 d-flex align-items-center gap-3" style="color: #000000; font-size: 2.2rem; letter-spacing: -0.5px;">

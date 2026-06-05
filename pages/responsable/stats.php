@@ -20,6 +20,8 @@ $pourcentage = ($total > 0) ? round(($valides / $total) * 100) : 0;
 $nb_problemes = $pdo->query("SELECT COUNT(*) FROM stage WHERE probleme IS NOT NULL AND probleme != ''")->fetchColumn();
 ?>
 
+<link rel="stylesheet" href="../../assets/css/style.css">
+
 <div class="container py-5" style="max-width: 1140px;">
     
     <div class="d-flex justify-content-between align-items-center mb-5 flex-wrap gap-3">
