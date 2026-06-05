@@ -17,7 +17,15 @@ $etudiants = $pdo->query($sql)->fetchAll();
 
 <link rel="stylesheet" href="../../assets/css/style.css">
 <div class="container py-5" style="max-width: 1140px;">
-    <h1 class="fw-bold mb-4 text-start" style="color: #2E4588; font-size: 2.2rem; letter-spacing: -0.5px;">Consultation des Etudiants</h1>
+    <h1 class="fw-bold mb-4 text-start position-relative pe-5" style="color: #2E4588; font-size: 2.2rem; letter-spacing: -0.5px; padding-right: 280px !important;">
+        Consultation des Etudiants
+        
+        <span class="badge px-4 py-2 rounded-3 fw-bold text-white shadow-sm" 
+              style="background-color: #DC3545; font-size: 0.85rem; letter-spacing: 0.5px; position: absolute; right: 0; top: 50%; transform: translateY(-50%); white-space: nowrap;">
+            SESSION ENSEIGNANT STANDARD
+        </span>
+        
+    </h1>
     
     <div class="bg-white p-5 text-dark" style="border-radius: 24px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.07), 0 5px 15px rgba(0, 0, 0, 0.04);">
         

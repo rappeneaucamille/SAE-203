@@ -50,6 +50,8 @@ $etudiants = $pdo->query("SELECT * FROM Etudiant ORDER BY nom ASC")->fetchAll(PD
         <h1 class="fw-bold m-0" style="color: #1E3A8A; font-size: 2.2rem; letter-spacing: -0.5px;">
             Administration
         </h1>
+        <span class="badge px-4 py-2 rounded-3 fw-bold text-white shadow-sm" style="background-color: #DC3545; font-size: 0.85rem; letter-spacing: 0.5px;">SESSION ADMINISTRATEUR</span>
+
         
         <div class="p-1 d-inline-flex gap-1" style="background-color: #F1F5F9; border-radius: 8px;">
             <a href="../responsable/dashboard.php" class="btn fw-medium d-inline-flex align-items-center gap-2 px-3 py-1.5" style="border-radius: 6px; font-size: 0.85rem; background-color: #0056B3; color: #FFFFFF; border: none;">
