@@ -80,206 +80,223 @@ $u->execute([$id_etud]);
 $u_info = $u->fetch();
 ?>
 
-<div class="container-fluid px-4 py-4">
-    <div class="row g-4">
-        
-        <div class="col-lg-4">
-            
-            <div class="card shadow-sm border-0 mb-4" style="border-radius: 15px; background-color: #f8f9fa;">
-                <div class="card-body">
-                    <h6 class="fw-bold text-primary mb-3"><i class="bi bi-person-check"></i> Mon Profil d'Affectation</h6>
-                    <div class="p-2 mb-2 bg-white rounded ">
-                        <small class="text-muted d-block fw-bold">Compétences :</small>
-                        <span class="small"><?= !empty($u_info['competences']) ? nl2br(htmlspecialchars($u_info['competences'])) : "<em>Non renseignées</em>" ?></span>
-                    </div>
-                    <div class="p-2 mb-3 bg-white rounded ">
-                        <small class="text-muted d-block fw-bold">Préférences :</small>
-                        <span class="small"><?= !empty($u_info['preferences']) ? nl2br(htmlspecialchars($u_info['preferences'])) : "<em>Non renseignées</em>" ?></span>
-                    </div>
-                    <button class="btn btn-sm btn-outline-primary w-100 fw-bold" data-bs-toggle="modal" data-bs-target="#modalSkills">Modifier mes informations</button>
-                </div>
-            </div>
-
-            <div class="card shadow-sm border-0 mb-4" style="background-color: rgba(230, 220, 255, 0.7); border-radius: 15px;">
-                <div class="card-body">
-                    <h6 class="fw-bold mb-3"><i class="bi bi-send-plus"></i> J'ai trouvé mon stage (Hors catalogue)</h6>
-                    <form method="POST">
-                        <p class="small fw-bold text-muted mb-1">L'entreprise :</p>
-                        <input type="text" name="ent_nom" class="form-control form-control-sm mb-2" placeholder="Nom de l'entreprise" required>
-                        <input type="text" name="sujet" class="form-control form-control-sm mb-2" placeholder="Sujet du stage" required>
-                        <input type="text" name="dates_stage" class="form-control form-control-sm mb-2" placeholder="Dates précises" required>
-                        
-                        <p class="small fw-bold text-muted mt-2 mb-1">Le Maître de Stage :</p>
-                        <div class="row g-2 mb-2">
-                            <div class="col-6"><input type="text" name="mds_nom" class="form-control form-control-sm" placeholder="Nom" required></div>
-                            <div class="col-6"><input type="text" name="mds_prenom" class="form-control form-control-sm" placeholder="Prénom" required></div>
+<div class="container py-4" style="max-width: 1100px;">
+    
+    <div class="row g-4 mb-5">
+        <div class="col-md-5">
+            <div class="card h-100 shadow border-0 p-3" style="border-radius: 20px; background-color: #ffffff;">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <div>
+                        <h5 class="fw-bold text-primary mb-4 d-flex align-items-center gap-2" style="color: #0066FF !important;">
+                            <i class="bi bi-person-check fs-4"></i> Mon Profil d'Affectation
+                        </h5>
+                        <div class="mb-3">
+                            <small class="text-muted d-block fw-bold mb-1">Compétences :</small>
+                            <p class="text-dark small bg-light p-3 rounded-3" style="min-height: 60px;">
+                                <?= !empty($u_info['competences']) ? nl2br(htmlspecialchars($u_info['competences'])) : "<em>Non renseignées</em>" ?>
+                            </p>
                         </div>
-                        <input type="email" name="mds_email" class="form-control form-control-sm mb-2" placeholder="Email du tuteur" required>
-
-                        <p class="small fw-bold text-muted mt-2 mb-1">Missions :</p>
-                        <textarea name="missions" class="form-control form-control-sm mb-3" rows="2" placeholder="Missions et compétences..."></textarea>
-                        
-                        <button type="submit" name="submit_perso" class="btn btn-dark btn-sm w-100 fw-bold">DÉCLARER AU RESPONSABLE</button>
-                    </form>
-                </div>
-            </div>
-
-            <div class="card shadow-sm border-0" style="background-color: rgba(215, 235, 255, 0.7); border-radius: 15px;">
-                <div class="card-header bg-transparent fw-bold border-0 pt-3">📋 Mes candidatures</div>
-                <div class="card-body">
-                    <?php foreach($demarches as $d): ?>
-                        <div class="bg-white p-2 rounded mb-2 shadow-sm">
-                            <div class="small fw-bold text-uppercase"><?= htmlspecialchars($d['entreprise_contactee']) ?></div>
-                            <div class="small text-dark fw-bold"><i class="bi bi-file-text"></i> <?= htmlspecialchars($d['offre_consultee']) ?></div>
-                                <span class="badge text-dark" style="font-size:0.6rem; background-color: <?= ['Validée' => 'rgba(25,135,84,0.6)', 'Refusé' => 'rgba(201,43,38,0.6)', 'En attente' => 'rgba(255,193,7,0.6)'][$d['statut']] ?? 'rgba(108,117,125,0.6)' ?>;">
-                                    <?= $d['statut'] ?>
-                                </span>                  
-                            </div>
-                    <?php endforeach; ?>
+                        <div class="mb-4">
+                            <small class="text-muted d-block fw-bold mb-1">Préférences :</small>
+                            <p class="text-dark small bg-light p-3 rounded-3" style="min-height: 60px;">
+                                <?= !empty($u_info['preferences']) ? nl2br(htmlspecialchars($u_info['preferences'])) : "<em>Non renseignées</em>" ?>
+                            </p>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline-primary btn-sm rounded-pill py-2 fw-bold w-100" style="border-color: #0066FF; color: #0066FF;" data-bs-toggle="modal" data-bs-target="#modalSkills">Modifier mes informations</button>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-8">
-            
-            <div class="card shadow-sm border-0 mb-4" style="border-radius: 15px;">
-                <div class="card-body p-3">
-                    <form method="GET" action="recherche.php" class="row g-2 align-items-end">
+        <div class="col-md-7">
+            <div class="card h-100 shadow border-0 p-3" style="border-radius: 20px; background-color: #ffffff;">
+                <div class="card-body">
+                    <h6 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-send-plus fs-5"></i> J'ai trouvé mon stage (Hors catalogue)
+                    </h6>
+                    <form method="POST">
+                        <small class="text-muted d-block mb-1">L'entreprise :</small>
+                        <input type="text" name="ent_nom" class="form-control form-control-sm mb-2 rounded-3 bg-light border-0" placeholder="Nom de l'entreprise" required>
+                        <input type="text" name="sujet" class="form-control form-control-sm mb-2 rounded-3 bg-light border-0" placeholder="Sujet du stage" required>
+                        <input type="text" name="dates_stage" class="form-control form-control-sm mb-3 rounded-3 bg-light border-0" placeholder="Dates précises" required>
                         
-                        <div class="col-md-5">
-                            <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-search"></i> Mots-clés (Poste, Entreprise...)</label>
-                            <input type="text" name="search_text" class="form-control form-control-sm" placeholder="Ex: Développeur, Apple..." value="<?= htmlspecialchars($search_text) ?>">
+                        <small class="text-muted d-block mb-1">Le Maître de Stage :</small>
+                        <div class="row g-2 mb-2">
+                            <div class="col-6"><input type="text" name="mds_nom" class="form-control form-control-sm rounded-3 bg-light border-0" placeholder="Nom" required></div>
+                            <div class="col-6"><input type="text" name="mds_prenom" class="form-control form-control-sm rounded-3 bg-light border-0" placeholder="Prénom" required></div>
                         </div>
+                        <input type="email" name="mds_email" class="form-control form-control-sm mb-3 rounded-3 bg-light border-0" placeholder="Email du tuteur" required>
+
+                        <small class="text-muted d-block mb-1">Missions :</small>
+                        <textarea name="missions" class="form-control form-control-sm mb-4 rounded-3 bg-light border-0" rows="2" placeholder="Missions et compétences..."></textarea>
                         
-                        <div class="col-md-3">
-                            <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-geo-alt"></i> Localisation</label>
-                            <select name="filter_lieu" class="form-select form-select-sm">
-                                <option value="">Tous les lieux</option>
-                                <?php foreach($lieux_disponibles as $l): ?>
-                                    <option value="<?= htmlspecialchars($l) ?>" <?= $filter_lieu === $l ? 'selected' : '' ?>><?= htmlspecialchars($l) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        
-                        <div class="col-md-3">
-                            <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-currency-euro"></i> Rémunération</label>
-                            <select name="filter_remun" class="form-select form-select-sm">
-                                <option value="">Toutes</option>
-                                <option value="remunere" <?= $filter_remun === 'remunere' ? 'selected' : '' ?>>Gratification payée</option>
-                                <option value="gratuit" <?= $filter_remun === 'gratuit' ? 'selected' : '' ?>>Non gratifié / Non spécifié</option>
-                            </select>
-                        </div>
-                        
-                        <div class="col-md-1 d-flex gap-1">
-                            <button type="submit" class="btn btn-primary btn-sm w-100" title="Filtrer"><i class="bi bi-funnel-fill"></i></button>
-                            <?php if($search_text !== '' || $filter_lieu !== '' || $filter_remun !== ''): ?>
-                                <a href="recherche.php" class="btn btn-outline-secondary btn-sm" title="Réinitialiser"><i class="bi bi-arrow-clockwise"></i></a>
-                            <?php endif; ?>
-                        </div>
+                        <button type="submit" name="submit_perso" class="btn btn-dark btn-sm rounded-pill w-100 fw-bold py-2 text-uppercase" style="letter-spacing: 0.5px; background-color: #1a1a1a;">Déclarer au responsable</button>
                     </form>
-                </div>
-            </div>
-
-            <div class="card shadow-sm border-0" style="border-radius: 15px;">
-                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0 fw-bold text-primary"><i class="bi bi-journal-bookmark-fill"></i> Catalogue des Offres MMI</h5>
-                    <span class="badge bg-light text-dark border fw-normal"><?= count($offres) ?> offre(s) trouvée(s)</span>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
-                                <tr class="small text-uppercase">
-                                    <th>Poste / Entreprise</th>
-                                    <th>Missions & Compétences</th>
-                                    <th>Détails</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php if(empty($offres)): ?>
-                                    <tr>
-                                        <td colspan="4" class="text-center py-5 text-muted">
-                                            <i class="bi bi-emoji-frown fs-3 d-block mb-2"></i>
-                                            Aucune offre ne correspond à vos critères de recherche.
-                                        </td>
-                                    </tr>
-                                <?php else: ?>
-                                    <?php foreach($offres as $o): ?>
-                                    <tr>
-                                        <td style="min-width: 200px;">
-                                            <div class="fw-bold text-dark" style="font-size: 1.1rem;">
-                                                <?= !empty($o['intitule']) ? htmlspecialchars($o['intitule']) : '<span class="text-muted italic">Intitulé non renseigné</span>' ?>
-                                            </div>
-                                            <div class="text-primary fw-bold small mt-1">
-                                                <i class="bi bi-building"></i> 
-                                                <?= !empty($o['contact']) ? htmlspecialchars($o['contact']) : '<span class="text-muted">Entreprise non renseignée</span>' ?>
-                                            </div>
-                                            <div class="text-muted small">
-                                                <i class="bi bi-geo-alt"></i> 
-                                                <?= !empty($o['lieu']) ? htmlspecialchars($o['lieu']) : '<span class="text-muted">Lieu non renseigné</span>' ?>
-                                            </div>
-                                        </td>
-
-                                        <td>
-                                            <div class="small mb-2">
-                                                <strong class="text-dark">Missions :</strong><br>
-                                                <?= !empty($o['description']) ? nl2br(htmlspecialchars($o['description'])) : '<span class="text-muted">Aucune description fournie</span>' ?>
-                                            </div>
-                                            <div class="small">
-                                                <strong class="text-dark">Compétences requises :</strong><br>
-                                                <?= !empty($o['competences']) ? htmlspecialchars($o['competences']) : '<span class="text-muted">Non renseignées</span>' ?>
-                                            </div>
-                                        </td>
-
-                                        <td style="min-width: 180px;" class="small">
-                                            <div class="mb-2">
-                                                <i class="bi bi-calendar3"></i> <strong>Dates :</strong><br>
-                                                <?= !empty($o['dates']) ? htmlspecialchars($o['dates']) : '<span class="text-muted">Non précisées</span>' ?>
-                                            </div>
-                                            <div>
-                                                <i class="bi bi-currency-euro"></i> <strong>Rémunération :</strong><br>
-                                                <span class="<?= (!empty($o['remuneration']) && $o['remuneration'] > 0) ? 'text-success fw-bold' : 'text-muted' ?>">
-                                                    <?= (!empty($o['remuneration']) && $o['remuneration'] > 0) ? htmlspecialchars($o['remuneration']) . ' €' : "Non renseignée" ?>
-                                                </span>
-                                            </div>
-                                        </td>
-
-                                        <td class="text-center">
-                                            <a href="postuler_traitement.php?id_offre=<?= $o['id_offre'] ?>" 
-                                            class="btn btn-sm shadow-sm fw-bold px-3" 
-                                            style="background-color: #2E4588 !important; color: #FFFFFF !important; border: 1px solid #0055A4; min-height: 38px; display: flex; align-items: center; justify-content: center;">
-                                                POSTULER
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="card shadow border-0 p-2 mb-4" style="border-radius: 15px; background-color: #ffffff;">
+        <div class="card-body p-2">
+            <form method="GET" action="recherche.php" class="row g-2 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-search"></i> Mots-clés</label>
+                    <input type="text" name="search_text" class="form-control form-control-sm bg-light border-0 rounded-3" placeholder="Ex: Développeur, Apple..." value="<?= htmlspecialchars($search_text) ?>">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-geo-alt"></i> Localisation</label>
+                    <select name="filter_lieu" class="form-select form-select-sm bg-light border-0 rounded-3">
+                        <option value="">Tous les lieux</option>
+                        <?php foreach($lieux_disponibles as $l): ?>
+                            <option value="<?= htmlspecialchars($l) ?>" <?= $filter_lieu === $l ? 'selected' : '' ?>><?= htmlspecialchars($l) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-currency-euro"></i> Rémunération</label>
+                    <select name="filter_remun" class="form-select form-select-sm bg-light border-0 rounded-3">
+                        <option value="">Toutes</option>
+                        <option value="remunere" <?= $filter_remun === 'remunere' ? 'selected' : '' ?>>Gratification payée</option>
+                        <option value="gratuit" <?= $filter_remun === 'gratuit' ? 'selected' : '' ?>>Non gratifié / Non spécifié</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex gap-1">
+                    <button type="submit" class="btn btn-primary btn-sm rounded-3 w-100 py-2 fw-bold" style="background-color: #0066FF;"><i class="bi bi-funnel-fill"></i> Filtrer</button>
+                    <?php if($search_text !== '' || $filter_lieu !== '' || $filter_remun !== ''): ?>
+                        <a href="recherche.php" class="btn btn-outline-secondary btn-sm rounded-3 d-flex align-items-center justify-content-center px-2" title="Réinitialiser"><i class="bi bi-arrow-clockwise"></i></a>
+                    <?php endif; ?>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="mb-5">
+        <h4 class="fw-bold text-primary mb-4 d-flex align-items-center gap-2" style="color: #0066FF !important;">
+            <i class="bi bi-search fs-4"></i> Catalogue des Offres MMI
+            <span class="fs-6 text-muted fw-normal">(<?= count($offres) ?> offre(s))</span>
+        </h4>
+
+        <?php if(empty($offres)): ?>
+            <div class="card shadow-sm border-0 text-center py-5 text-muted" style="border-radius: 20px;">
+                <i class="bi bi-emoji-frown fs-2 mb-2"></i>
+                <p class="mb-0">Aucune offre ne correspond à vos critères de recherche.</p>
+            </div>
+        <?php else: ?>
+            <?php foreach($offres as $o): ?>
+                <div class="card shadow border-0 p-3 mb-3 transition-hover" style="border-radius: 20px; background-color: #ffffff;">
+                    <div class="card-body">
+                        <div class="row align-items-center g-3">
+                            <div class="col-lg-4">
+                                <h4 class="fw-bold text-dark mb-2" style="font-size: 1.4rem;">
+                                    <?= !empty($o['intitule']) ? htmlspecialchars($o['intitule']) : '<span class="text-muted italic">Intitulé non renseigné</span>' ?>
+                                </h4>
+                                <div class="text-primary fw-bold mb-1 d-flex align-items-center gap-1" style="color: #0066FF !important; font-size: 1.05rem;">
+                                    <i class="bi bi-building"></i> 
+                                    <?= !empty($o['contact']) ? htmlspecialchars($o['contact']) : '<span class="text-muted">Entreprise non renseignée</span>' ?>
+                                </div>
+                                <div class="text-muted small d-flex align-items-center gap-1">
+                                    <i class="bi bi-geo-alt"></i> 
+                                    <?= !empty($o['lieu']) ? htmlspecialchars($o['lieu']) : '<span class="text-muted">Lieu non renseigné</span>' ?>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 px-lg-3 border-start border-light">
+                                <div class="small mb-2">
+                                    <strong class="text-dark d-block mb-1">Missions :</strong>
+                                    <span class="text-muted text-truncate-custom">
+                                        <?= !empty($o['description']) ? nl2br(htmlspecialchars($o['description'])) : 'Aucune description.' ?>
+                                    </span>
+                                </div>
+                                <div class="small">
+                                    <strong class="text-dark d-block mb-1">Compétences :</strong>
+                                    <span class="text-muted">
+                                        <?= !empty($o['competences']) ? htmlspecialchars($o['competences']) : 'Non renseignées.' ?>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-2 px-lg-3 border-start border-light small">
+                                <div class="mb-2">
+                                    <strong class="text-dark d-block mb-1">Dates :</strong>
+                                    <span class="text-muted"><?= !empty($o['dates']) ? htmlspecialchars($o['dates']) : 'Non précisées' ?></span>
+                                </div>
+                                <div>
+                                    <strong class="text-dark d-block mb-1">Rémunération :</strong>
+                                    <span class="<?= (!empty($o['remuneration']) && $o['remuneration'] > 0) ? 'text-success fw-bold' : 'text-muted' ?>" style="color: <?= (!empty($o['remuneration']) && $o['remuneration'] > 0) ? '#258754' : '' ?> !important;">
+                                        <?= (!empty($o['remuneration']) && $o['remuneration'] > 0) ? htmlspecialchars($o['remuneration']) . ' €' : "0,00 €" ?>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-2 text-center text-lg-end">
+                                <a href="postuler_traitement.php?id_offre=<?= $o['id_offre'] ?>" 
+                                class="btn shadow-sm fw-bold px-4 py-2 w-100 rounded-3 text-uppercase align-items-center justify-content-center" 
+                                style="background-color: #2E4588; color: #FFFFFF; border: none; font-size: 0.85rem; letter-spacing: 0.5px; min-height: 40px; display: inline-flex;">
+                                    Postuler
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+
+    <div class="mb-4">
+        <h4 class="fw-bold text-dark mb-4 d-flex align-items-center gap-2">
+            <i class="bi bi-file-text fs-4"></i> Mes candidatures
+        </h4>
+
+        <?php if(empty($demarches)): ?>
+            <div class="card shadow-sm border-0 text-center py-4 text-muted" style="border-radius: 15px;">
+                <p class="mb-0 small">Vous n'avez pas encore soumis de candidatures.</p>
+            </div>
+        <?php else: ?>
+            <?php foreach($demarches as $d): ?>
+                <div class="card shadow border-0 p-3 mb-2" style="border-radius: 15px; background-color: #ffffff;">
+                    <div class="card-body py-1 d-flex justify-content-between align-items-center">
+                        <div class="fw-bold text-dark" style="font-size: 1.2rem;">
+                            <?= htmlspecialchars($d['offre_consultee']) ?>
+                        </div>
+                        
+                        <?php 
+                        $bg_color = '#ffc107'; // En attente (Jaune)
+                        if ($d['statut'] === 'Validée') $bg_color = '#73B479'; // Vert maquette
+                        if ($d['statut'] === 'Refusé') $bg_color = '#E28383'; // Rouge maquette
+                        ?>
+                        <span class="badge text-white px-4 py-2 rounded-pill text-uppercase fw-bold" style="font-size:0.75rem; background-color: <?= $bg_color ?>; letter-spacing: 0.5px; min-width: 140px; display: inline-block; text-center;">
+                            <?= $d['statut'] === 'Refusé' ? 'REFUSÉE' : htmlspecialchars($d['statut']) ?>
+                        </span>                  
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+
 </div>
 
 <div class="modal fade" id="modalSkills" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header"><h5>Mettre à jour mon profil d'affectation</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow" style="border-radius: 20px;">
+            <div class="modal-header border-0 pt-4 px-4">
+                <h5 class="fw-bold m-0">Mettre à jour mon profil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
             <form method="POST">
-                <div class="modal-body">
+                <div class="modal-body px-4">
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Mes Compétences</label>
-                        <textarea name="competences_etud" class="form-control" rows="4"><?= htmlspecialchars($u_info['competences'] ?? '') ?></textarea>
+                        <label class="form-label small fw-bold text-muted">Mes Compétences</label>
+                        <textarea name="competences_etud" class="form-control bg-light border-0 rounded-3" rows="4"><?= htmlspecialchars($u_info['competences'] ?? '') ?></textarea>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Mes Préférences</label>
-                        <textarea name="preferences_etud" class="form-control" rows="4"><?= htmlspecialchars($u_info['preferences'] ?? '') ?></textarea>
+                        <label class="form-label small fw-bold text-muted">Mes Préférences</label>
+                        <textarea name="preferences_etud" class="form-control bg-light border-0 rounded-3" rows="4"><?= htmlspecialchars($u_info['preferences'] ?? '') ?></textarea>
                     </div>
                 </div>
-                <div class="modal-footer"><button type="submit" name="update_skills" class="btn btn-primary">Enregistrer</button></div>
+                <div class="modal-footer border-0 pb-4 px-4">
+                    <button type="submit" name="update_skills" class="btn btn-primary rounded-pill px-4 fw-bold w-100 py-2" style="background-color: #0066FF;">Enregistrer les modifications</button>
+                </div>
             </form>
         </div>
     </div>
