@@ -31,6 +31,7 @@ $info_stage = $stmtConvention->fetch();
 $is_signee = ($info_stage && $info_stage['convention_signee'] === 'oui');
 ?>
 
+<link rel="stylesheet" href="../../assets/css/style.css">
 <div class="container py-5" style="max-width: 900px;">
     <?php if(isset($success_msg)): ?>
         <div class="alert alert-success shadow-sm border-0 mb-4 rounded-3">🚀 <?= $success_msg ?></div>

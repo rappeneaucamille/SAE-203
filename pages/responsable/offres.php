@@ -9,97 +9,126 @@ if ($_SESSION['role'] !== 'Responsable stage' && $_SESSION['role'] !== 'Administ
 }
 ?>
 
-<div class="container py-4">
-    <h2 class="mb-4 fw-bold">Gestion du Catalogue d'Offres</h2>
+<div class="container py-5" style="max-width: 1140px;">
+    <h1 class="fw-bold mb-5" style="color: #000000; font-size: 2.2rem; letter-spacing: -0.5px;">Gestion du Catalogue d'Offres</h1>
     
-    <div class="card p-4 shadow-sm border-0" style="border-radius: 15px;">
-        <h5 class="fw-bold text-primary mb-3"><i class="bi bi-plus-circle"></i> Publier une nouvelle offre détaillée</h5>
+    <div class="bg-white p-5 mb-5 border-0" style="border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.06), 0 5px 15px rgba(0,0,0,0.03);">
+        <h5 class="fw-bold text-primary mb-4 d-flex align-items-center gap-2" style="color: #0066FF !important; font-size: 1.2rem;">
+            <i class="bi bi-plus-circle-fill"></i> Publier une nouvelle offre détaillée
+        </h5>
         
-        <form action="traitement_offre.php" method="POST" class="row g-3">
+        <form action="traitement_offre.php" method="POST" class="row g-4">
             <div class="col-md-6">
-                <label class="form-label small fw-bold">Intitulé du stage</label>
-                <input type="text" name="titre" class="form-control" placeholder="Ex: Designer Web" required>
+                <label class="form-label small fw-bold text-dark">Intitulé du stage</label>
+                <input type="text" name="titre" class="form-control py-2.5" placeholder="Ex : Designer Web" style="border-radius: 8px; border: 1px solid #E2E8F0;" required>
             </div>
             <div class="col-md-6">
-                <label class="form-label small fw-bold">Entreprise / Contact</label>
-                <input type="text" name="ent" class="form-control" placeholder="Nom de l'entreprise ou mail contact" required>
+                <label class="form-label small fw-bold text-dark">Entreprise / Contact</label>
+                <input type="text" name="ent" class="form-control py-2.5" placeholder="Nom de l'entreprise ou mail contact" style="border-radius: 8px; border: 1px solid #E2E8F0;" required>
             </div>
 
             <div class="col-12">
-                <label class="form-label small fw-bold">Description des missions</label>
-                <textarea name="desc" class="form-control" rows="3" placeholder="Détaillez les missions ici..." required></textarea>
+                <label class="form-label small fw-bold text-dark">Description des missions</label>
+                <textarea name="desc" class="form-control py-2.5" rows="4" placeholder="Détaillez les missions ici..." style="border-radius: 8px; border: 1px solid #E2E8F0;" required></textarea>
             </div>
 
             <div class="col-md-6">
-                <label class="form-label small fw-bold">Compétences requises</label>
-                <input type="text" name="competences" class="form-control" placeholder="Ex: HTML, CSS, Figma, Suite Adobe">
+                <label class="form-label small fw-bold text-dark">Compétences requises</label>
+                <input type="text" name="competences" class="form-control py-2.5" placeholder="Ex : HTML, CSS, Figma, Suite Adobe" style="border-radius: 8px; border: 1px solid #E2E8F0;">
             </div>
             <div class="col-md-6">
-                <label class="form-label small fw-bold">Lieu du stage</label>
-                <input type="text" name="lieu" class="form-control" placeholder="Ex: Paris (75) ou Télétravail">
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label small fw-bold">Dates (Début et Fin)</label>
-                <input type="text" name="dates" class="form-control" placeholder="Ex: Du 12 Mai au 14 Juillet">
-            </div>
-            <div class="col-md-6">
-                <label class="form-label small fw-bold">Rémunération (le cas échéant)</label>
-                <input type="text" name="remu" class="form-control" placeholder="Ex: 600€/mois ou Gratification légale">
+                <label class="form-label small fw-bold text-dark">Lieu du stage</label>
+                <input type="text" name="lieu" class="form-control py-2.5" placeholder="Ex : Paris (75) ou Télétravail" style="border-radius: 8px; border: 1px solid #E2E8F0;">
             </div>
 
             <div class="col-md-6">
-                <label class="form-label small fw-bold">Promotion concernée</label>
-                <select name="promo" class="form-select">
+                <label class="form-label small fw-bold text-dark">Dates (Début et Fin)</label>
+                <input type="text" name="dates" class="form-control py-2.5" placeholder="Ex : Du Mai au Juillet" style="border-radius: 8px; border: 1px solid #E2E8F0;">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label small fw-bold text-dark">Rémunération (le cas échéant)</label>
+                <input type="text" name="remu" class="form-control py-2.5" placeholder="Ex : 600€/mois ou Gratification légale" style="border-radius: 8px; border: 1px solid #E2E8F0;">
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label small fw-bold text-dark">Promotion concernée</label>
+                <select name="promo" class="form-select py-2.5" style="border-radius: 8px; border: 1px solid #E2E8F0;">
                     <option value="MMI1">MMI 1</option>
                     <option value="MMI2">MMI 2</option>
                     <option value="MMI3">MMI 3</option>
                 </select>
             </div>
             <div class="col-md-6">
-                <label class="form-label small fw-bold">Année universitaire</label>
-                <input type="text" name="annee" class="form-control" value="2025-2026">
+                <label class="form-label small fw-bold text-dark">Année universitaire</label>
+                <input type="text" name="annee" class="form-control py-2.5" value="2025-2026" style="border-radius: 8px; border: 1px solid #E2E8F0;">
             </div>
 
-            <div class="col-12 mt-4">
-                <button type="submit" class="btn btn-primary w-100 fw-bold shadow-sm">PUBLIER L'OFFRE AU CATALOGUE</button>
+            <div class="col-12 mt-4 pt-2">
+                <button type="submit" class="btn text-white w-100 fw-bold py-3 shadow-sm" style="background-color: #2E4588; border-radius: 8px; letter-spacing: 0.5px; font-size: 0.95rem;">PUBLIER L'OFFRE AU CATALOGUE</button>
             </div>
         </form>
     </div>
-</div>
 
-<div class="card p-4 shadow-sm border-0">
-        <h5 class="fw-bold mb-3">Offres actuellement en ligne</h5>
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>Offre</th>
-                        <th>Entreprise / Lieu</th>
-                        <th>Description</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $offres = $pdo->query("SELECT * FROM Offre ORDER BY id_offre DESC")->fetchAll();
-                    foreach($offres as $o): ?>
-                    <tr>
-                        <td><strong><?= htmlspecialchars($o['intitule']) ?></strong></td>
-                        <td><span class="badge bg-info text-dark"><?= htmlspecialchars($o['contact']) ?></span><br><small><?= htmlspecialchars($o['lieu']) ?></small></td>
-                        <td class="small"><?= substr(htmlspecialchars($o['description']), 0, 80) ?>...</td>
-                        <td>
-                            <a href="supprimer_offre.php?id=<?= $o['id_offre'] ?>" 
-                            class="btn btn-danger btn-sm fw-bold" 
-                            onclick="return confirm('Supprimer cette offre définitivement ?')">
-                                <i class="bi bi-trash"></i> SUPPRIMER
-                            </a>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
+    <h3 class="fw-bold mb-4" style="color: #0066FF; font-size: 1.6rem; margin-top: 3rem;">Offres actuellement en ligne</h3>
+
+    <div class="d-flex flex-column gap-4">
+        <?php
+        // On récupère les offres ordonnées par ID décroissant
+        $offres = $pdo->query("SELECT * FROM Offre ORDER BY id_offre DESC")->fetchAll();
+        
+        if (empty($offres)): ?>
+            <div class="bg-white p-5 text-center text-muted border-0 shadow-sm" style="border-radius: 20px;">
+                <i class="bi bi-folder-x fs-2 mb-2 d-block"></i> Aucune offre en ligne pour le moment.
+            </div>
+        <?php else:
+            foreach($offres as $o): ?>
+            <div class="bg-white p-4 border-0 d-flex justify-content-between align-items-center flex-wrap flex-md-nowrap gap-3 position-relative" style="border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.02);">
+                
+                <div style="flex: 1; min-width: 250px;">
+                    <h4 class="fw-bold text-dark mb-2" style="font-size: 1.4rem; letter-spacing: -0.3px;"><?= htmlspecialchars($o['intitule'] ?? $o['titre']) ?></h4>
+                    <div class="d-flex align-items-center gap-1 mb-2 text-primary fw-bold" style="color: #0066FF !important;">
+                        <i class="bi bi-building"></i> <?= htmlspecialchars($o['entreprise'] ?? $o['contact']) ?>
+                    </div>
+                    <div class="text-muted small fw-medium">
+                        <i class="bi bi-geo-alt-fill me-1"></i> <?= htmlspecialchars($o['lieu']) ?>
+                    </div>
+                </div>
+
+                <div style="flex: 1.2; min-width: 280px; font-size: 0.9rem;">
+                    <div class="mb-2">
+                        <span class="fw-bold text-dark">Missions :</span> 
+                        <span class="text-secondary"><?= htmlspecialchars($o['description'] ?? $o['missions'] ?? '') ?></span>
+                    </div>
+                    <div>
+                        <span class="fw-bold text-dark">Compétences :</span> 
+                        <span class="text-secondary"><?= htmlspecialchars($o['competences'] ?? '') ?></span>
+                    </div>
+                </div>
+
+                <div style="flex: 1; min-width: 200px; font-size: 0.9rem;">
+                    <div class="mb-2">
+                        <span class="fw-bold text-dark">Dates :</span> 
+                        <span class="text-secondary"><?= htmlspecialchars($o['dates'] ?? '') ?></span>
+                    </div>
+                    <div>
+                        <span class="fw-bold text-dark">Rémunération :</span> 
+                        <span class="text-success fw-bold"><?= htmlspecialchars($o['remu'] ?? $o['remuneration'] ?? '0.00 €') ?></span>
+                    </div>
+                </div>
+
+                <div class="text-end ps-md-3">
+                    <a href="supprimer_offre.php?id=<?= $o['id_offre'] ?>" 
+                       class="btn text-white fw-bold px-4 py-2 d-flex align-items-center gap-2 rounded-3" 
+                       style="background-color: #E07A7A; border: none; font-size: 0.85rem; letter-spacing: 0.5px;"
+                       onclick="return confirm('Supprimer cette offre définitivement ?')">
+                        <i class="bi bi-trash3-fill"></i> SUPPRIMER
+                    </a>
+                </div>
+
+            </div>
+            <?php endforeach;
+        endif; ?>
     </div>
+</div>
 
 <?php include '../../includes/footer.php'; ?>

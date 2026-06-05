@@ -40,6 +40,7 @@ if ($soutenance) {
 }
 ?>
 
+<link rel="stylesheet" href="../../assets/css/style.css">
 <div class="container py-5">
     <div class="row justify-content-center g-4">
         

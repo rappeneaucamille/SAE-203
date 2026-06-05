@@ -20,69 +20,72 @@ $stmt = $pdo->query($sql);
 $maitres = $stmt->fetchAll();
 ?>
 
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold"><i class="bi bi-people-fill text-primary"></i> Gestion des Maîtres de Stage</h2>
-        <span class="badge bg-primary px-3 py-2"><?= count($maitres) ?> Tuteurs enregistrés</span>
+<link rel="stylesheet" href="../../assets/css/style.css">
+<div class="container py-5" style="max-width: 1000px;">
+    
+    <div class="d-flex justify-content-between align-items-center mb-5 flex-wrap gap-3">
+        <h1 class="fw-bold m-0 d-flex align-items-center gap-3" style="color: #000000; font-size: 2.2rem; letter-spacing: -0.5px;">
+            <i class="bi bi-people-fill text-primary" style="color: #0d6efd !important;"></i> Gestion des Maîtres de Stage
+        </h1>
+        <span class="badge px-3 py-2 fw-medium" style="background-color: #007bff; color: #FFFFFF; border-radius: 20px; font-size: 0.9rem;">
+            <?= count($maitres) ?> Tuteur<?= count($maitres) > 1 ? 's' : '' ?> enregistré<?= count($maitres) > 1 ? 's' : '' ?>
+        </span>
     </div>
 
-    <div class="card shadow-sm border-0">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>Maître de Stage</th>
-                        <th>Entreprise</th>
-                        <th>Étudiant encadré</th>
-                        <th class="text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (empty($maitres)): ?>
-                        <tr>
-                            <td colspan="4" class="text-center py-4 text-muted">Aucun maître de stage trouvé dans les dossiers validés.</td>
-                        </tr>
-                    <?php else: ?>
-                        <?php foreach ($maitres as $m): 
-                            // Extraction des infos du texte brut (reponses)
-                            $infos = explode("\n", $m['reponses']);
-                            $nom_tuteur = "Non spécifié";
-                            $email_tuteur = "Pas d'email";
-                            
-                            foreach($infos as $ligne) {
-                                if(strpos($ligne, 'NOM :') !== false) $nom_tuteur = trim(str_replace('NOM :', '', $ligne));
-                                if(strpos($ligne, 'PRÉNOM :') !== false) $nom_tuteur .= " " . trim(str_replace('PRÉNOM :', '', $ligne));
-                                if(strpos($ligne, 'EMAIL :') !== false) $email_tuteur = trim(str_replace('EMAIL :', '', $ligne));
-                            }
-                        ?>
-                        <tr>
-                            <td>
-                                <div class="fw-bold"><?= htmlspecialchars($nom_tuteur) ?></div>
-                                <div class="small text-muted"><i class="bi bi-envelope"></i> <?= htmlspecialchars($email_tuteur) ?></div>
-                            </td>
-                            <td>
-                                <span class="badge bg-info text-dark"><?= htmlspecialchars($m['entreprise_contactee']) ?></span>
-                            </td>
-                            <td>
-                                <div class="small"><?= strtoupper($m['etud_nom']) ?> <?= $m['etud_prenom'] ?></div>
-                            </td>
-                            <td class="text-center">
-                                <button class="btn btn-sm btn-outline-warning" onclick="alert('Ce tuteur n\'a pas encore de compte utilisateur. Les accès seront générés lors de l\'envoi de la convention.')">
-                                    <i class="bi bi-key"></i> Réinitialiser PW
-                                </button>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
+    <div class="d-flex flex-column gap-4">
+        <?php if (empty($maitres)): ?>
+            <div class="bg-white p-5 text-center border-0" style="border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.05);">
+                <span class="text-muted">Aucun maître de stage trouvé dans les dossiers validés.</span>
+            </div>
+        <?php else: ?>
+            <?php foreach ($maitres as $m): 
+                // Extraction des infos du texte brut (reponses)
+                $infos = explode("\n", $m['reponses']);
+                $nom_tuteur = "Non spécifié";
+                $email_tuteur = "Pas d'email";
+                
+                foreach($infos as $ligne) {
+                    if(strpos($ligne, 'NOM :') !== false) $nom_tuteur = trim(str_replace('NOM :', '', $ligne));
+                    if(strpos($ligne, 'PRÉNOM :') !== false) $nom_tuteur .= " " . trim(str_replace('PRÉNOM :', '', $ligne));
+                    if(strpos($ligne, 'EMAIL :') !== false) $email_tuteur = trim(str_replace('EMAIL :', '', $ligne));
+                }
+            ?>
+                <div class="bg-white p-4 border-0 d-flex align-items-center justify-content-between flex-wrap gap-4 item-carte" 
+                     style="border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.04), 0 3px 10px rgba(0,0,0,0.015) !important; transition: transform 0.2s ease;">
+                    
+                    <div style="min-width: 220px;">
+                        <h4 class="fw-bold m-0 text-dark" style="font-size: 1.25rem; letter-spacing: -0.3px;"><?= htmlspecialchars($nom_tuteur) ?></h4>
+                        <div class="text-muted small mt-1" style="font-size: 0.88rem;"><?= htmlspecialchars($email_tuteur) ?></div>
+                    </div>
+
+                    <div class="text-start text-md-center" style="min-width: 150px;">
+                        <span class="fw-bold text-dark" style="font-size: 1.2rem;"><?= htmlspecialchars($m['entreprise_contactee']) ?></span>
+                    </div>
+
+                    <div style="min-width: 250px;">
+                        <span class="text-secondary fw-medium">Étudiant encadré : </span>
+                        <strong class="text-dark"><?= strtoupper(htmlspecialchars($m['etud_nom'])) ?> <?= htmlspecialchars($m['etud_prenom']) ?></strong>
+                    </div>
+
+                    <div>
+                        <button class="btn fw-medium d-inline-flex align-items-center gap-2 px-3 text-white shadow-sm" 
+                                style="background-color: #2F448A; border-radius: 8px; font-size: 0.85rem; height: 38px; border: none;"
+                                onclick="alert('Ce tuteur n\'a pas encore de compte utilisateur. Les accès seront générés lors de l\'envoi de la convention.')">
+                            <i class="bi bi-check2-circle"></i> MODIFIER PW
+                        </button>
+                    </div>
+
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </div>
 </div>
 
 <style>
-    .table-hover tbody tr:hover {
-        background-color: rgba(0, 85, 164, 0.03);
+    /* Optionnel : Un léger effet au survol pour donner de la vie à l'interface */
+    .item-carte:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 18px 40px rgba(0,0,0,0.06) !important;
     }
 </style>
 

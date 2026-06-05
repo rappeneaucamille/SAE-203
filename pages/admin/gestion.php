@@ -42,71 +42,86 @@ $profs = $pdo->query("SELECT * FROM Enseignant ORDER BY nom ASC")->fetchAll(PDO:
 $etudiants = $pdo->query("SELECT * FROM Etudiant ORDER BY nom ASC")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold" style="color: #0055A4;">Administration</h2>
-        <div class="btn-group shadow-sm">
-            <a href="../responsable/dashboard.php" class="btn btn-primary btn-sm px-3">
+
+<link rel="stylesheet" href="../../assets/css/style.css">
+<div class="container py-5" style="max-width: 1140px;">
+    
+    <div class="d-flex justify-content-between align-items-center mb-5 flex-wrap gap-3">
+        <h1 class="fw-bold m-0" style="color: #1E3A8A; font-size: 2.2rem; letter-spacing: -0.5px;">
+            Administration
+        </h1>
+        
+        <div class="p-1 d-inline-flex gap-1" style="background-color: #F1F5F9; border-radius: 8px;">
+            <a href="../responsable/dashboard.php" class="btn fw-medium d-inline-flex align-items-center gap-2 px-3 py-1.5" style="border-radius: 6px; font-size: 0.85rem; background-color: #0056B3; color: #FFFFFF; border: none;">
                 <i class="bi bi-briefcase"></i> Mode Responsable
             </a>
-            <a href="../jury/notes.php" class="btn btn-secondary btn-sm px-3">
+            <a href="../jury/notes.php" class="btn fw-medium d-inline-flex align-items-center gap-2 px-3 py-1.5" style="border-radius: 6px; font-size: 0.85rem; background-color: #64748B; color: #FFFFFF; border: none;">
                 <i class="bi bi-mortarboard"></i> Mode Jury
             </a>
         </div>
     </div>
 
     <?php if(isset($_GET['status']) && $_GET['status'] == 'validated'): ?>
-        <div class="alert alert-success shadow-sm border-0">✅ Le compte a été validé avec succès !</div>
+        <div class="alert alert-success border-0 px-4 py-3 mb-4 shadow-sm" style="border-radius: 10px;">✅ Le compte a été validé avec succès !</div>
     <?php endif; ?>
     <?php if(isset($_GET['status']) && $_GET['status'] == 'deleted'): ?>
-        <div class="alert alert-danger shadow-sm border-0">❌ Le compte a été supprimé.</div>
+        <div class="alert alert-danger border-0 px-4 py-3 mb-4 shadow-sm" style="border-radius: 10px;">❌ Le compte a été supprimé définitivement.</div>
     <?php endif; ?>
     <?php if(isset($_GET['status']) && $_GET['status'] == 'added'): ?>
-        <div class="alert alert-success shadow-sm border-0">✅ Le compte a été ajouté avec succès.</div>
+        <div class="alert alert-success border-0 px-4 py-3 mb-4 shadow-sm" style="border-radius: 10px;">✅ Le compte a été ajouté avec succès.</div>
     <?php endif; ?>
 
-    <div class="mb-4">
-        <input type="text" id="tableSearch" class="form-control shadow-sm" placeholder="Rechercher un nom, un email, une promo...">
+    <div class="position-relative mb-5">
+        <span class="position-absolute top-50 start-0 translate-middle-y ps-3 text-secondary opacity-60">
+            <i class="bi bi-search"></i>
+        </span>
+        <input type="text" id="tableSearch" class="form-control py-2.5 ps-5 border border-light-subtle shadow-sm" 
+               placeholder="Rechercher un nom, un email, une promo..." 
+               style="border-radius: 10px; font-size: 0.95rem; background-color: #FFFFFF;">
     </div>
 
-    <div class="card shadow-sm mb-5 border-0">
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Enseignants & Staff</h5>
-            <a href="add_enseignant.php" class="btn btn-success btn-sm">Ajouter Enseignant</a>
+    <div class="border-0 shadow-sm overflow-hidden mb-5" style="border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.04) !important; background-color: #FFFFFF;">
+        <div class="px-4 py-3 d-flex justify-content-between align-items-center" style="background-color: #334155;">
+            <h4 class="m-0 fw-bold text-white" style="font-size: 1.25rem; letter-spacing: -0.3px;">Enseignant & Staff</h4>
+            <a href="add_enseignant.php" class="btn btn-success fw-medium btn-sm d-inline-flex align-items-center gap-1 px-3 py-1.5" style="border-radius: 6px; background-color: #10B981; border: none; font-size: 0.85rem;">
+                <i class="bi bi-plus-lg"></i> Ajouter Enseignant
+            </a>
         </div>
+        
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead>
+            <table class="table align-middle mb-0 bg-white">
+                <thead style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #F1F5F9;">
                     <tr>
-                        <th>Nom</th>
-                        <th>Rôle</th>
-                        <th class="text-end">Actions</th>
+                        <th class="ps-4 py-3 text-secondary fw-semibold w-50">Nom</th>
+                        <th class="py-3 text-secondary fw-semibold">Rôle</th>
+                        <th class="pe-4 py-3 text-secondary fw-semibold text-end">Actions</th>
                     </tr>
                 </thead>
-                <tbody id="adminTableProf">
+                <tbody id="adminTableProf" style="font-size: 0.95rem; color: #334155;">
                     <?php foreach($profs as $p): 
                         $raw_statut = $p['statut_compte'] ?? $p['Statut_compte'] ?? '';
                         $email_prof = $p['identifiant'] ?? $p['Identifiant'];
-                        
-                        // Condition ultra-souple : si le mot "attente" est présent dans le statut
                         $is_prof_en_attente = (stripos($raw_statut, 'attente') !== false);
                     ?>
-                    <tr>
-                        <td>
-                            <strong><?= strtoupper($p['nom']) ?></strong> <?= $p['prenom'] ?>
+                    <tr class="align-middle" style="border-bottom: 1px solid #F1F5F9;">
+                        <td class="ps-4 py-3.5">
+                            <span class="text-dark fw-bold"><?= strtoupper(htmlspecialchars($p['nom'])) ?></span> 
+                            <span class="text-secondary ms-1"><?= htmlspecialchars($p['prenom']) ?></span>
                             <?php if($is_prof_en_attente): ?>
-                                <span class="badge bg-warning text-dark ms-2">En attente</span>
+                                <span class="badge bg-warning text-dark ms-2 fw-medium" style="font-size: 0.75rem; border-radius: 4px;">En attente</span>
                             <?php endif; ?>
-                            <br><small><?= $email_prof ?></small>
+                            <div class="text-muted small mt-0.5" style="font-size: 0.8rem; opacity: 0.7;"><?= htmlspecialchars($email_prof) ?></div>
                         </td>
-                        <td><span class="badge bg-info text-dark"><?= $p['fonctions'] ?></span></td>
-                        <td class="text-end">
+                        <td>
+                            <span class="text-dark fw-medium" style="font-size: 0.9rem;"><?= htmlspecialchars($p['fonctions']) ?></span>
+                        </td>
+                        <td class="pe-4 py-3.5 text-end">
                             <div class="d-flex justify-content-end gap-2">
                                 <?php if($is_prof_en_attente): ?>
-                                    <a href="gestion.php?validate_user=<?= urlencode($email_prof) ?>&type=prof" class="btn btn-sm btn-success fw-bold">Valider le compte</a>
+                                    <a href="gestion.php?validate_user=<?= urlencode($email_prof) ?>&type=prof" class="btn btn-sm fw-bold px-3 text-white" style="background-color: #10B981; border-radius: 6px; font-size: 0.85rem;">Valider</a>
                                 <?php endif; ?>
-                                <a href="edit_user.php?id=<?= urlencode($email_prof) ?>&type=prof" class="btn btn-sm btn-primary">Modifier</a>
-                                <a href="gestion.php?delete_user=<?= urlencode($email_prof) ?>&type=prof" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer ce prof ?')">Supprimer</a>
+                                <a href="edit_user.php?id=<?= urlencode($email_prof) ?>&type=prof" class="btn btn-sm fw-medium px-3" style="background-color: #3B82F6; color: #FFFFFF; border-radius: 6px; font-size: 0.85rem; border: none;">Modifier</a>
+                                <a href="gestion.php?delete_user=<?= urlencode($email_prof) ?>&type=prof" class="btn btn-sm fw-medium px-3" style="background-color: #EF4444; color: #FFFFFF; border-radius: 6px; font-size: 0.85rem; border: none;" onclick="return confirm('Supprimer ce prof ?')">Supprimer</a>
                             </div>
                         </td>
                     </tr>
@@ -116,42 +131,49 @@ $etudiants = $pdo->query("SELECT * FROM Etudiant ORDER BY nom ASC")->fetchAll(PD
         </div>
     </div>
 
-    <div class="card shadow-sm border-0">
-        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Étudiants</h5>
-            <a href="add_etudiant.php" class="btn btn-light btn-sm">Ajouter un Étudiant</a>
+    <div class="border-0 shadow-sm overflow-hidden" style="border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.04) !important; background-color: #FFFFFF;">
+        <div class="px-4 py-3 d-flex justify-content-between align-items-center" style="background-color: #475569;">
+            <h4 class="m-0 fw-bold text-white" style="font-size: 1.25rem; letter-spacing: -0.3px;">Étudiants</h4>
+            <a href="add_etudiant.php" class="btn btn-light fw-medium btn-sm d-inline-flex align-items-center gap-1 px-3 py-1.5" style="border-radius: 6px; font-size: 0.85rem; color: #334155; border: none;">
+                <i class="bi bi-plus-lg"></i> Ajouter un Étudiant
+            </a>
         </div>
+        
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead>
+            <table class="table align-middle mb-0 bg-white">
+                <thead style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #F1F5F9;">
                     <tr>
-                        <th>Nom</th>
-                        <th>Promo</th>
-                        <th class="text-end">Actions</th>
+                        <th class="ps-4 py-3 text-secondary fw-semibold w-50">Nom</th>
+                        <th class="py-3 text-secondary fw-semibold text-center">Promotion</th>
+                        <th class="pe-4 py-3 text-secondary fw-semibold text-end">Actions</th>
                     </tr>
                 </thead>
-                <tbody id="adminTableEtud">
+                <tbody id="adminTableEtud" style="font-size: 0.95rem; color: #334155;">
                     <?php foreach($etudiants as $e): 
                         $raw_statut_etud = $e['statut_compte'] ?? $e['Statut_compte'] ?? '';
-                        
-                        // Condition ultra-souple : si le mot "attente" est présent dans le statut
                         $is_etud_en_attente = (stripos($raw_statut_etud, 'attente') !== false);
+                        $promo = htmlspecialchars($e['promotion'] ?? 'MMI1');
                     ?>
-                    <tr>
-                        <td>
-                            <strong><?= strtoupper($e['nom']) ?></strong> <?= $e['prenom'] ?>
+                    <tr class="align-middle" style="border-bottom: 1px solid #F1F5F9;">
+                        <td class="ps-4 py-3.5">
+                            <span class="text-dark fw-bold"><?= strtoupper(htmlspecialchars($e['nom'])) ?></span> 
+                            <span class="text-secondary ms-1"><?= htmlspecialchars($e['prenom']) ?></span>
                             <?php if($is_etud_en_attente): ?>
-                                <span class="badge bg-warning text-dark ms-2">En attente</span>
+                                <span class="badge bg-warning text-dark ms-2 fw-medium" style="font-size: 0.75rem; border-radius: 4px;">En attente</span>
                             <?php endif; ?>
                         </td>
-                        <td><?= $e['promotion'] ?></td>
-                        <td class="text-end">
+                        <td class="py-3 text-center">
+                            <span class="badge px-3 py-2 fw-semibold" style="background-color: #64748B; color: #FFFFFF; border-radius: 6px; font-size: 0.75rem;">
+                                <?= $promo ?>
+                            </span>
+                        </td>
+                        <td class="pe-4 py-3.5 text-end">
                             <div class="d-flex justify-content-end gap-2">
                                 <?php if($is_etud_en_attente): ?>
-                                    <a href="gestion.php?validate_user=<?= $e['num_etudiant'] ?>&type=etud" class="btn btn-sm btn-success fw-bold">Valider le compte</a>
+                                    <a href="gestion.php?validate_user=<?= $e['num_etudiant'] ?>&type=etud" class="btn btn-sm fw-bold px-3 text-white" style="background-color: #10B981; border-radius: 6px; font-size: 0.85rem;">Valider</a>
                                 <?php endif; ?>
-                                <a href="edit_user.php?id=<?= $e['num_etudiant'] ?>&type=etud" class="btn btn-sm btn-primary">Modifier</a>
-                                <a href="gestion.php?delete_user=<?= $e['num_etudiant'] ?>&type=etud" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer cet étudiant ?')">Supprimer</a>
+                                <a href="edit_user.php?id=<?= $e['num_etudiant'] ?>&type=etud" class="btn btn-sm fw-medium px-3" style="background-color: #3B82F6; color: #FFFFFF; border-radius: 6px; font-size: 0.85rem; border: none;">Modifier</a>
+                                <a href="gestion.php?delete_user=<?= $e['num_etudiant'] ?>&type=etud" class="btn btn-sm fw-medium px-3" style="background-color: #EF4444; color: #FFFFFF; border-radius: 6px; font-size: 0.85rem; border: none;" onclick="return confirm('Supprimer cet étudiant ?')">Supprimer</a>
                             </div>
                         </td>
                     </tr>
@@ -163,6 +185,7 @@ $etudiants = $pdo->query("SELECT * FROM Etudiant ORDER BY nom ASC")->fetchAll(PD
 </div>
 
 <script>
+// Filtre de recherche universel et dynamique
 document.getElementById('tableSearch').addEventListener('keyup', function() {
     let filter = this.value.toUpperCase();
     let rows = document.querySelectorAll("tbody tr");
@@ -171,4 +194,5 @@ document.getElementById('tableSearch').addEventListener('keyup', function() {
     });
 });
 </script>
+
 <?php include '../../includes/footer.php'; ?>

@@ -29,9 +29,10 @@ $u->execute([$id]);
 $user = $u->fetch();
 ?>
 
+<link rel="stylesheet" href="../../assets/css/style.css">
 <div class="container py-5">
     <div class="card p-4 mx-auto shadow border-0" style="max-width: 500px;">
-        <h4 class="fw-bold mb-4">Modifier le profil : <?= $type == 'prof' ? 'Staff' : 'Étudiant' ?></h4>
+        <h4 class="fw-bold text-center mb-4">Modifier le profil </h4>
         <form method="POST">
             <div class="mb-3">
                 <label class="form-label">Nom</label>
@@ -50,7 +51,6 @@ $user = $u->fetch();
                         <option value="Responsable stage" <?= $user['fonctions'] == 'Responsable stage' ? 'selected' : '' ?>>Responsable stage</option>
                         <option value="Chef de département" <?= $user['fonctions'] == 'Chef de département' ? 'selected' : '' ?>>Chef de département</option>
                         <option value="Jury de soutenance" <?= $user['fonctions'] == 'Jury de soutenance' ? 'selected' : '' ?>>Jury de soutenance</option>
-                        <option value="Administrateur" <?= $user['fonctions'] == 'Administrateur' ? 'selected' : '' ?>>Administrateur</option>
                     </select>
                 </div>
             <?php else: ?>

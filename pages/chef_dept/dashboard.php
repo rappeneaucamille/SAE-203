@@ -66,24 +66,32 @@ $stmt_list->execute();
 $etudiants = $stmt_list->fetchAll();
 ?>
 
+<link rel="stylesheet" href="../../assets/css/style.css">
+
+<style>
+    .card-stats, .card-stats h2, .card-stats span {
+        color: #FFFFFF !important;
+    }
+</style>
+
 <div class="container py-5" style="max-width: 1140px;">
     <h1 class="fw-bold mb-4 text-start" style="color: #2E4588; font-size: 2.2rem; letter-spacing: -0.5px;">Tableau de Bord Direction MMI</h1>
 
     <div class="row g-4 mb-5">
         <div class="col-md-4">
-            <div class="card p-4 border-0 text-white shadow-sm" style="background-color: #71B999; border-radius: 16px;">
+            <div class="card card-stats p-4 border-0 shadow-sm" style="background-color: #71B999; border-radius: 16px;">
                 <span class="text-uppercase fw-bold opacity-75" style="font-size: 0.8rem; letter-spacing: 0.5px;">STAGES VALIDÉS</span>
                 <h2 class="fw-bold mt-2 mb-0" style="font-size: 2.5rem; letter-spacing: -1px;"><?= $stages_valides ?> / <?= $total_etud ?></h2>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card p-4 border-0 text-white shadow-sm" style="background-color: #F5CD5F; border-radius: 16px;">
+            <div class="card card-stats p-4 border-0 shadow-sm" style="background-color: #F5CD5F; border-radius: 16px;">
                 <span class="text-uppercase fw-bold opacity-75" style="font-size: 0.8rem; letter-spacing: 0.5px;">EN ATTENTE DE VALIDATION</span>
                 <h2 class="fw-bold mt-2 mb-0" style="font-size: 2.5rem; letter-spacing: -1px;"><?= $en_cours ?></h2>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card p-4 border-0 text-white shadow-sm" style="background-color: #E68289; border-radius: 16px;">
+            <div class="card card-stats p-4 border-0 shadow-sm" style="background-color: #E68289; border-radius: 16px;">
                 <span class="text-uppercase fw-bold opacity-75" style="font-size: 0.8rem; letter-spacing: 0.5px;">ÉTUDIANTS SANS STAGE</span>
                 <h2 class="fw-bold mt-2 mb-0" style="font-size: 2.5rem; letter-spacing: -1px;"><?= $sans_stage ?></h2>
             </div>

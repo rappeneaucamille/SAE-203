@@ -23,6 +23,7 @@ $stmt->execute([$mon_email, $mon_email]);
 $soutenances = $stmt->fetchAll();
 ?>
 
+<link rel="stylesheet" href="../../assets/css/style.css">
 <div class="container py-5" style="max-width: 1140px;">
     <h1 class="fw-bold mb-4 text-start" style="color: #2E4588; font-size: 2.2rem; letter-spacing: -0.5px;">Saisie des Notes de Soutenance</h1>
     

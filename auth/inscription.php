@@ -39,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
-
 <div class="container py-5">
     <div class="card mx-auto shadow-lg border-0" style="max-width: 850px; border-radius: 20px; overflow: hidden;">
         <div class="p-4 text-center" style="background-color: var(--mmi-blue);">

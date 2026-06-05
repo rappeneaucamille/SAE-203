@@ -18,9 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 ?>
 
+<link rel="stylesheet" href="../../assets/css/style.css">
 <div class="container py-5">
     <div class="card p-4 mx-auto shadow border-0" style="max-width: 500px;">
-        <h4 class="fw-bold mb-4">Ajouter un Étudiant</h4>
+        <h4 class="fw-bold text-center mb-4">Ajouter un Étudiant</h4>
         <form method="POST">
             <div class="mb-3"><label>Numéro Étudiant</label><input type="text" name="num_etudiant" class="form-control" required></div>
             <div class="mb-3"><label>Nom</label><input type="text" name="nom" class="form-control" required></div>

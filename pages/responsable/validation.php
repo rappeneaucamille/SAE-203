@@ -8,7 +8,7 @@ if ($_SESSION['role'] !== 'Responsable stage' && $_SESSION['role'] !== 'Administ
     exit();
 }
 
-// LOGIQUE DE VALIDATION ET MISE À JOUR DES DONNÉES
+// LOGIQUE DE VALIDATION ET MISE À JOUR DES DONNÉES (STRICTEMENT IDENTIQUE)
 if (isset($_GET['action']) && isset($_GET['id'])) {
     $id_recherche = $_GET['id'];
     
@@ -16,7 +16,6 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
         try {
             $pdo->beginTransaction();
 
-            // 1. On récupère les infos de la recherche et l'étudiant lié
             $query = "SELECT r.*, ef.num_etudiant 
                       FROM Recherche r 
                       JOIN Effectuer ef ON r.id_recherche = ef.id_recherche 
@@ -26,12 +25,10 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
             $data = $stmt->fetch();
 
             if ($data) {
-                // On vérifie si un stage existe déjà pour éviter les doublons
                 $checkStage = $pdo->prepare("SELECT id_stage FROM Stage WHERE num_etudiant = ?");
                 $checkStage->execute([$data['num_etudiant']]);
                 
                 if (!$checkStage->fetch()) {
-                    // 2. On crée le STAGE officiel initialement à 'non'
                     $insertStage = $pdo->prepare("INSERT INTO Stage (num_etudiant, lieu, convention_signee) VALUES (?, ?, 'non')");
                     $insertStage->execute([
                         $data['num_etudiant'], 
@@ -39,23 +36,21 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
                     ]);
                 }
 
-                // 3. On marque la recherche comme 'Validée'
                 $updateRecherche = $pdo->prepare("UPDATE Recherche SET statut = 'Validée' WHERE id_recherche = ?");
                 $updateRecherche->execute([$id_recherche]);
 
                 $pdo->commit();
-                echo "<div class='alert alert-success m-3 shadow-sm'>✅ Stage validé avec succès !</div>";
+                echo "<div class='alert alert-success m-4 border-0 shadow-sm' style='border-radius: 12px;'>✅ Stage validé avec succès !</div>";
             }
         } catch (Exception $e) {
             $pdo->rollBack();
-            echo "<div class='alert alert-danger m-3'>Erreur lors de la validation : " . $e->getMessage() . "</div>";
+            echo "<div class='alert alert-danger m-4 border-0 shadow-sm' style='border-radius: 12px;'>Erreur lors de la validation : " . $e->getMessage() . "</div>";
         }
     } 
     elseif ($_GET['action'] == 'refuser') {
         $pdo->prepare("UPDATE Recherche SET statut = 'Refusé' WHERE id_recherche = ?")->execute([$id_recherche]);
-        echo "<div class='alert alert-warning m-3'>Dossier refusé.</div>";
+        echo "<div class='alert alert-warning m-4 border-0 shadow-sm' style='border-radius: 12px;'>Dossier refusé.</div>";
     }
-    // NOUVELLE ACTION : Permet au responsable de signer la convention à tout moment
     elseif ($_GET['action'] == 'signer_convention') {
         try {
             $stmtEtud = $pdo->prepare("SELECT num_etudiant FROM Effectuer WHERE id_recherche = ?");
@@ -65,10 +60,11 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
             if ($liaison) {
                 $updateConv = $pdo->prepare("UPDATE Stage SET convention_signee = 'oui' WHERE num_etudiant = ?");
                 $updateConv->execute([$liaison['num_etudiant']]);
-                echo "<div class='alert alert-success m-3 shadow-sm'>✍️ Convention marquée comme signée avec succès !</div>";
+                echo "<div class='alert alert-success m-4 border-0 shadow-sm' style='border-radius: 12px;'>✍️ Convention marquée comme signée avec succès !</div>";
             }
         } catch (Exception $e) {
-            echo "<div class='alert alert-danger m-3'>Erreur lors de la signature : " . $e->getMessage() . "</div>";
+            $pdo->get_html_theme_color = "danger";
+            echo "<div class='alert alert-danger m-4 border-0 shadow-sm' style='border-radius: 12px;'>Erreur lors de la signature : " . $e->getMessage() . "</div>";
         }
     }
 }
@@ -77,21 +73,25 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
 $recherches = $pdo->query("SELECT r.*, e.nom, e.prenom FROM Recherche r JOIN Effectuer ef ON r.id_recherche = ef.id_recherche JOIN Etudiant e ON ef.num_etudiant = e.num_etudiant WHERE r.statut = 'En attente' ORDER BY r.date_recherche ASC")->fetchAll();
 ?>
 
-<div class="container py-4">
-    <h2 class="fw-bold mb-4"><i class="bi bi-clipboard-check"></i> Dossiers de stage à valider</h2>
+<div class="container py-5" style="max-width: 1140px;">
+    <h1 class="fw-bold mb-5 d-flex align-items-center gap-3" style="color: #000000; font-size: 2.2rem; letter-spacing: -0.5px;">
+        <i class="bi bi-check2-square text-dark"></i> Dossiers de stage à valider
+    </h1>
     
     <?php if(empty($recherches)): ?>
-        <div class="alert alert-light border text-center py-5 shadow-sm">
-            <i class="bi bi-check2-all display-4 text-success"></i>
-            <p class="mt-3 mb-0 text-muted">Tous les dossiers ont été traités.</p>
+        <div class="bg-white p-5 text-center border-0 shadow-sm" style="border-radius: 24px;">
+            <i class="bi bi-check2-all display-4 text-success mb-3 d-block"></i>
+            <h5 class="fw-bold text-dark mb-1">Tout est à jour !</h5>
+            <p class="text-muted mb-0 small">Tous les dossiers d'étudiants ont été traités.</p>
         </div>
     <?php else: ?>
-        <div class="row">
+        <div class="d-flex flex-column gap-4">
             <?php foreach($recherches as $r): 
                 // --- EXTRACTION DU MAÎTRE DE STAGE ---
                 $lignes = explode("\n", $r['reponses']);
                 $tuteur_nom = "";
                 $tuteur_prenom = "";
+                $tuteur_mail = "";
                 
                 foreach($lignes as $l) {
                     if(stripos($l, 'NOM :') !== false) {
@@ -100,54 +100,77 @@ $recherches = $pdo->query("SELECT r.*, e.nom, e.prenom FROM Recherche r JOIN Eff
                     if(stripos($l, 'PRÉNOM :') !== false) {
                         $tuteur_prenom = trim(str_ireplace('PRÉNOM :', '', $l));
                     }
+                    if(stripos($l, 'EMAIL :') !== false || stripos($l, 'MAIL :') !== false) {
+                        $tuteur_mail = trim(str_ireplace(['EMAIL :', 'MAIL :'], '', $l));
+                    }
                 }
                 $maitre_complet = trim($tuteur_prenom . " " . $tuteur_nom);
                 if(empty($maitre_complet)) $maitre_complet = "Non renseigné";
             ?>
-            <div class="col-12 mb-4">
-                <div class="card shadow-sm border-0" style="border-left: 5px solid #0d6efd;">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-md-3 border-end">
-                                <h5 class="fw-bold text-primary mb-1"><?= strtoupper($r['nom']) ?> <?= $r['prenom'] ?></h5>
-                                <div class="badge bg-light text-dark border mb-2">Soumis le <?= date('d/m/Y', strtotime($r['date_recherche'])) ?></div>
-                                <p class="mb-0 small">
-                                    <strong><i class="bi bi-building"></i> Entreprise :</strong><br>
-                                    <?= htmlspecialchars($r['entreprise_contactee']) ?>
-                                </p>
-                            </div>
+            <div class="bg-white p-4 border-0 shadow-sm d-flex justify-content-between align-items-start flex-wrap flex-lg-nowrap gap-4" style="border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.04), 0 2px 10px rgba(0,0,0,0.01) !important;">
+                
+                <div style="flex: 1.1; min-width: 240px;">
+                    <h3 class="fw-bold text-primary mb-1" style="color: #0066FF !important; font-size: 1.5rem; letter-spacing: -0.3px;">
+                        <?= htmlspecialchars($r['prenom']) ?> <?= strtoupper($r['nom']) ?>
+                    </h3>
+                    <div class="text-muted mb-3 italic small" style="font-size: 0.8rem;">
+                        Soumis le <?= date('d/m/Y', strtotime($r['date_recherche'])) ?>
+                    </div>
+                    
+                    <div class="d-flex align-items-center gap-2 text-dark small fw-bold mb-1">
+                        <i class="bi bi-building text-secondary"></i> Entreprise :
+                    </div>
+                    <div class="text-secondary small ps-4">
+                        <?= htmlspecialchars($r['entreprise_contactee']) ?>
+                    </div>
+                </div>
 
-                            <div class="col-md-3 border-end">
-                                <p class="mb-0">
-                                    <strong><i class="bi bi-person-badge"></i> Maître de Stage :</strong><br>
-                                    <span class="text-primary fw-bold"><?= htmlspecialchars($maitre_complet) ?></span>
-                                </p>
-                            </div>
+                <div style="flex: 1; min-width: 220px;">
+                    <div class="d-flex align-items-center gap-2 text-dark small fw-bold mb-2">
+                        <i class="bi bi-person-badge-fill text-secondary"></i> Maître de Stage :
+                    </div>
+                    <div class="fw-bold text-primary ps-4 small mb-1" style="color: #0066FF !important;">
+                        <?= htmlspecialchars($maitre_complet) ?>
+                    </div>
+                    <?php if(!empty($tuteur_mail)): ?>
+                        <div class="text-muted ps-4 small" style="font-size: 0.8rem;"><?= htmlspecialchars($tuteur_mail) ?></div>
+                    <?php endif; ?>
+                </div>
 
-                            <div class="col-md-4">
-                                <p class="mb-1 small"><strong><i class="bi bi-file-earmark-text"></i> Sujet :</strong> <?= htmlspecialchars($r['offre_consultee']) ?></p>
-                                <div class="p-2 bg-light rounded" style="font-size: 0.8rem; max-height: 100px; overflow-y: auto;">
-                                    <strong>Détails :</strong><br>
-                                    <span class="text-muted italic"><?= !empty($r['reponses']) ? nl2br(htmlspecialchars($r['reponses'])) : "<em>Aucun détail supplémentaire</em>" ?></span>
-                                </div>
-                            </div>
-
-                            <div class="col-md-2 text-center">
-                                <div class="d-grid gap-2">
-                                    <a href="validation.php?action=valider&id=<?= $r['id_recherche'] ?>" class="btn btn-success fw-bold btn-sm">
-                                        <i class="bi bi-check-lg"></i> VALIDER LE DOSSIER
-                                    </a>
-                                    <a href="validation.php?action=signer_convention&id=<?= $r['id_recherche'] ?>" class="btn btn-primary fw-bold btn-sm">
-                                        <i class="bi bi-pencil-fill"></i> SIGNER CONVENTION
-                                    </a>
-                                    <a href="validation.php?action=refuser&id=<?= $r['id_recherche'] ?>" class="btn btn-outline-danger btn-sm">
-                                        <i class="bi bi-x-lg"></i> Refuser
-                                    </a>
-                                </div>
-                            </div>
+                <div style="flex: 1.5; min-width: 300px;">
+                    <div class="d-flex align-items-center gap-2 text-dark small fw-bold mb-2">
+                        <i class="bi bi-file-earmark-text-fill text-secondary"></i> Sujet : <span class="fw-medium text-secondary"><?= htmlspecialchars($r['offre_consultee']) ?></span>
+                    </div>
+                    
+                    <div class="p-3 border-0 rounded-3 text-secondary" style="background-color: #F8FAFC; font-size: 0.85rem;">
+                        <span class="fw-bold text-dark d-block mb-1">Détails :</span>
+                        <div style="max-height: 90px; overflow-y: auto; line-height: 1.4;">
+                            <?= !empty($r['reponses']) ? nl2br(htmlspecialchars($r['reponses'])) : "<em>Aucun détail supplémentaire</em>" ?>
                         </div>
                     </div>
                 </div>
+
+                <div class="d-flex flex-column gap-2 text-end ps-lg-3" style="min-width: 180px; align-self: center;">
+                    
+                    <a href="validation.php?action=valider&id=<?= $r['id_recherche'] ?>" 
+                       class="btn text-white fw-bold py-2 px-3 text-center border-0 small" 
+                       style="background-color: #76BA99; border-radius: 6px; font-size: 0.85rem; letter-spacing: 0.3px;">
+                        Valider
+                    </a>
+                    
+                    <a href="validation.php?action=signer_convention&id=<?= $r['id_recherche'] ?>" 
+                       class="btn btn-outline-primary fw-bold py-2 px-3 text-center small" 
+                       style="border-radius: 6px; font-size: 0.85rem; border-color: #0066FF; color: #0066FF;">
+                        <i class="bi bi-pencil-fill small"></i> Signer Convention
+                    </a>
+                    
+                    <a href="validation.php?action=refuser&id=<?= $r['id_recherche'] ?>" 
+                       class="btn btn-outline-danger fw-bold py-2 px-3 text-center bg-white small" 
+                       style="border-radius: 6px; font-size: 0.85rem; border-color: #E07A7A; color: #E07A7A;">
+                        Refuser
+                    </a>
+                </div>
+
             </div>
             <?php endforeach; ?>
         </div>

@@ -19,6 +19,7 @@ $user->execute([$id]);
 $u = $user->fetch();
 ?>
 
+<link rel="stylesheet" href="../../assets/css/style.css">
 <div class="container py-5" style="max-width: 1200px;">
     <?php if($success): ?>
         <div class="alert alert-success border-0 shadow-sm mb-4 rounded-3">✨ Profil mis à jour avec succès !</div>

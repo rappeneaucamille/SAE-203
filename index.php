@@ -31,7 +31,7 @@ if (isset($_SESSION['role'])) {
 
 include 'includes/header.php';
 ?>
-
+<link rel="stylesheet" href="assets/css/style.css">
 <div class="container d-flex align-items-center justify-content-center" style="min-height: 80vh;">
     <div class="card p-4 shadow-lg" style="max-width: 450px; width: 100%; border-top: 5px solid var(--mmi-blue);">
         <div class="text-center mb-4">

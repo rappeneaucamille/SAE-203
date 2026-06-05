@@ -80,6 +80,7 @@ $u->execute([$id_etud]);
 $u_info = $u->fetch();
 ?>
 
+<link rel="stylesheet" href="../../assets/css/style.css">
 <div class="container py-4" style="max-width: 1100px;">
     
     <div class="row g-4 mb-5">

@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $fonction = $_POST['fonction'];
     $mdp_brut = $_POST['mdp'];
 
-    // 1. VÉRIFICATION DU FORMAT DE L'EMAIL (Compatible PHP 7 et PHP 8)
+    // 1. VÉRIFICATION DU FORMAT DE L'EMAIL 
     $domaine = '@univ-eiffel.fr';
     $longueur_domaine = strlen($domaine);
     $fin_email = substr($email, -$longueur_domaine);
@@ -52,9 +52,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 ?>
 
+<link rel="stylesheet" href="../../assets/css/style.css">
 <div class="container py-5">
     <div class="card p-4 mx-auto shadow border-0" style="max-width: 500px;">
-        <h4 class="fw-bold mb-4">Ajouter un Enseignant</h4>
+        <h4 class="fw-bold text-center mb-4">Ajouter un Enseignant</h4>
         
         <?php if ($error): ?>
             <div class="alert alert-danger border-0 shadow-sm mb-3"><?= $error ?></div>
