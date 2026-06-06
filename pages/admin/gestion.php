@@ -42,7 +42,6 @@ $profs = $pdo->query("SELECT * FROM Enseignant ORDER BY nom ASC")->fetchAll(PDO:
 $etudiants = $pdo->query("SELECT * FROM Etudiant ORDER BY nom ASC")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-
 <link rel="stylesheet" href="../../assets/css/style.css">
 <div class="container py-5" style="max-width: 1140px;">
     
@@ -123,8 +122,13 @@ $etudiants = $pdo->query("SELECT * FROM Etudiant ORDER BY nom ASC")->fetchAll(PD
                                     <a href="gestion.php?validate_user=<?= urlencode($email_prof) ?>&type=prof" class="btn btn-sm fw-bold px-3 text-white" style="background-color: #10B981; border-radius: 6px; font-size: 0.85rem;">Valider</a>
                                 <?php endif; ?>
                                 <a href="edit_user.php?id=<?= urlencode($email_prof) ?>&type=prof" class="btn btn-sm fw-medium px-3" style="background-color: #3B82F6; color: #FFFFFF; border-radius: 6px; font-size: 0.85rem; border: none;">Modifier</a>
-                                <a href="gestion.php?delete_user=<?= urlencode($email_prof) ?>&type=prof" class="btn btn-sm fw-medium px-3" style="background-color: #EF4444; color: #FFFFFF; border-radius: 6px; font-size: 0.85rem; border: none;" onclick="return confirm('Supprimer ce prof ?')">Supprimer</a>
-                            </div>
+                                <a href="gestion.php?delete_user=<?= urlencode($email_prof) ?>&type=prof" 
+                                class="btn btn-sm fw-medium px-3 btn-confirm" 
+                                style="background-color: #EF4444; color: #FFFFFF; border-radius: 6px; font-size: 0.85rem; border: none;" 
+                                data-confirm="Êtes-vous sûr de vouloir supprimer ce professeur ? Cette action est irréversible.">
+                                    Supprimer
+                                </a>                           
+                             </div>
                         </td>
                     </tr>
                     <?php endforeach; ?>
@@ -179,7 +183,12 @@ $etudiants = $pdo->query("SELECT * FROM Etudiant ORDER BY nom ASC")->fetchAll(PD
                                     <a href="gestion.php?validate_user=<?= $e['num_etudiant'] ?>&type=etud" class="btn btn-sm fw-bold px-3 text-white" style="background-color: #10B981; border-radius: 6px; font-size: 0.85rem;">Valider</a>
                                 <?php endif; ?>
                                 <a href="edit_user.php?id=<?= $e['num_etudiant'] ?>&type=etud" class="btn btn-sm fw-medium px-3" style="background-color: #3B82F6; color: #FFFFFF; border-radius: 6px; font-size: 0.85rem; border: none;">Modifier</a>
-                                <a href="gestion.php?delete_user=<?= $e['num_etudiant'] ?>&type=etud" class="btn btn-sm fw-medium px-3" style="background-color: #EF4444; color: #FFFFFF; border-radius: 6px; font-size: 0.85rem; border: none;" onclick="return confirm('Supprimer cet étudiant ?')">Supprimer</a>
+                                <a href="gestion.php?delete_user=<?= $e['num_etudiant'] ?>&type=etud" 
+                                class="btn btn-sm fw-medium px-3 btn-confirm" 
+                                style="background-color: #EF4444; color: #FFFFFF; border-radius: 6px; font-size: 0.85rem; border: none;" 
+                                data-confirm="Êtes-vous sûr de vouloir supprimer cet étudiant ? Cette action effacera ses données.">
+                                    Supprimer
+                                </a>                          
                             </div>
                         </td>
                     </tr>
