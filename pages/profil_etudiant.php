@@ -8,7 +8,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] === 'Etudiant') {
     exit();
 }
 
-// CORRECTION : On vérifie si l'ID existe et n'est pas une chaîne vide (car empty(0) renvoie true)
 if (!isset($_GET['id']) || $_GET['id'] === '') {
     echo "<div class='container py-5'><div class='alert alert-danger'>Aucun étudiant spécifié.</div></div>";
     include '../includes/footer.php';
@@ -19,7 +18,6 @@ if (!isset($_GET['id']) || $_GET['id'] === '') {
 $num_etud = (string)$_GET['id'];
 
 // 1. RÉCUPÉRATION DES INFOS PERSO DE L'ÉTUDIANT
-// CORRECTION : On passe les paramètres proprement sous forme de chaînes
 $stmtEtud = $pdo->prepare("SELECT * FROM Etudiant WHERE CAST(num_etudiant AS CHAR) = ? OR LOWER(identifiant) = LOWER(?)");
 $stmtEtud->execute([$num_etud, $num_etud]);
 $etudiant = $stmtEtud->fetch();
