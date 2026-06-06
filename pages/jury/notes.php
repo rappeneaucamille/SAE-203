@@ -10,16 +10,27 @@ if ($_SESSION['role'] !== 'Jury de soutenance' && $_SESSION['role'] !== 'Adminis
 
 $mon_email = $_SESSION['identifiant'] ?? '';
 
-// Requête SQL
-$sql = "SELECT s.*, e.nom, e.prenom, e.promotion, j.enseignant_1, j.enseignant_2 
-        FROM soutenance s
-        LEFT JOIN etudiant e ON LOWER(s.etudiant) = LOWER(e.identifiant) 
-        INNER JOIN jury j ON s.id_jury = j.id_jury
-        WHERE LOWER(j.enseignant_1) = LOWER(?) OR LOWER(j.enseignant_2) = LOWER(?)
-        ORDER BY s.date_soutenance ASC";
+// Condition pour l'administrateur afin qu'il voit tout
+if ($_SESSION['role'] === 'Administrateur') {
+    // CORRECTION : Remplacement de LEFT JOIN etudiant par INNER JOIN pour masquer les étudiants inexistants (INCONNU)
+    $sql = "SELECT s.*, e.num_etudiant, e.nom, e.prenom, e.promotion, j.enseignant_1, j.enseignant_2 
+            FROM soutenance s
+            INNER JOIN etudiant e ON LOWER(s.etudiant) = LOWER(e.identifiant) 
+            LEFT JOIN jury j ON s.id_jury = j.id_jury
+            ORDER BY s.date_soutenance ASC";
+    $stmt = $pdo->query($sql);
+} else {
+    // Requête d'origine pour le jury standard (Modifiée aussi en INNER JOIN par sécurité)
+    $sql = "SELECT s.*, e.num_etudiant, e.nom, e.prenom, e.promotion, j.enseignant_1, j.enseignant_2 
+            FROM soutenance s
+            INNER JOIN etudiant e ON LOWER(s.etudiant) = LOWER(e.identifiant) 
+            INNER JOIN jury j ON s.id_jury = j.id_jury
+            WHERE LOWER(j.enseignant_1) = LOWER(?) OR LOWER(j.enseignant_2) = LOWER(?)
+            ORDER BY s.date_soutenance ASC";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$mon_email, $mon_email]);
+}
 
-$stmt = $pdo->prepare($sql);
-$stmt->execute([$mon_email, $mon_email]);
 $soutenances = $stmt->fetchAll();
 ?>
 
@@ -28,10 +39,9 @@ $soutenances = $stmt->fetchAll();
     <h1 class="fw-bold mb-4 text-start position-relative pe-5" style="color: #2E4588; font-size: 2.2rem; letter-spacing: -0.5px; padding-right: 280px !important;">
         Saisie des Notes de Soutenance        
         <span class="badge px-4 py-2 rounded-3 fw-bold text-white shadow-sm" 
-              style="background-color: #DC3545; font-size: 0.85rem; letter-spacing: 0.5px; position: absolute; right: 0; top: 50%; transform: translateY(-50%); white-space: nowrap;">
-            SESSION JURY DE SOUTENANCE
+              style="background-color: <?= $_SESSION['role'] === 'Administrateur' ? '#DC3545' : '#DC3545' ?>; font-size: 0.85rem; letter-spacing: 0.5px; position: absolute; right: 0; top: 50%; transform: translateY(-50%); white-space: nowrap;">
+            SESSION <?= strtoupper($_SESSION['role']) ?>
         </span>
-        
     </h1>
 
     <div class="card p-2 mb-5 border-0 bg-light" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
@@ -48,7 +58,7 @@ $soutenances = $stmt->fetchAll();
     <div id="notesContainer">
         <?php if (empty($soutenances)): ?>
             <div class="card border-0 p-5 text-center text-muted" style="border-radius: 20px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);">
-                <i class="bi bi-calendar-x mb-3 text-secondary" style="font-size: 3rem Pap;"></i>
+                <i class="bi bi-calendar-x mb-3 text-secondary" style="font-size: 3rem;"></i>
                 <p class="m-0">Vous n'avez aucune soutenance programmée pour le moment.</p>
             </div>
         <?php else: ?>
@@ -59,8 +69,11 @@ $soutenances = $stmt->fetchAll();
                      style="border-radius: 20px; border: none; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.07), 0 5px 15px rgba(0, 0, 0, 0.04);">
                     
                     <div class="d-flex align-items-center gap-4">
-                        <h3 class="fw-bold m-0 text-dark" style="font-size: 1.4rem; letter-spacing: -0.3px; min-width: 180px;">
-                            <?= htmlspecialchars($s['prenom'] ?? '') ?> <?= strtoupper(htmlspecialchars($s['nom'] ?? 'Inconnu')) ?>
+                        <h3 class="m-0" style="font-size: 1.4rem; letter-spacing: -0.3px; min-width: 180px;">
+                            <a href="../profil_etudiant.php?id=<?= urlencode($s['num_etudiant'] ?? '') ?>" class="text-decoration-none text-dark fw-bold">
+                                <span class="text-capitalize"><?= htmlspecialchars($s['prenom'] ?? '') ?></span> <?= strtoupper(htmlspecialchars($s['nom'] ?? 'Inconnu')) ?>
+                                <i class="bi bi-box-arrow-up-right small text-secondary ms-1" style="font-size: 0.85rem;"></i>
+                            </a>
                         </h3>
                         <div class="text-white fw-bold text-center d-flex align-items-center justify-content-center" 
                              style="background-color: #6C757D; width: 55px; height: 32px; border-radius: 6px; font-size: 0.85rem; letter-spacing: 0.5px;">
@@ -111,8 +124,8 @@ $soutenances = $stmt->fetchAll();
 
                     <div class="w-100 mt-3 pt-2 border-top border-light-subtle text-muted d-flex gap-4" style="font-size: 0.8rem;">
                         <span><i class="bi bi-calendar3 me-1"></i> <?= date('d/m/Y', strtotime($s['date_soutenance'])) ?></span>
-                        <span><i class="bi bi-clock me-1"></i> <?= substr($s['heure_debut'], 0, 5) ?> - <?= substr($s['heure_fin'], 0, 5) ?></span>
-                        <span><i class="bi bi-geo-alt me-1"></i> Salle : <?= htmlspecialchars($s['salle']) ?></span>
+                        <span><i class="bi bi-clock me-1"></i> <?= substr($s['heure_debut'] ?? '', 0, 5) ?> - <?= substr($s['heure_fin'] ?? '', 0, 5) ?></span>
+                        <span><i class="bi bi-geo-alt me-1"></i> Salle : <?= htmlspecialchars($s['salle'] ?? 'N/A') ?></span>
                     </div>
                 </div>
             <?php endforeach; ?>

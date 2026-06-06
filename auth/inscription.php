@@ -102,11 +102,11 @@ function updateGroups(promoId, tdId, tpId) {
     let optionsTD = ""; let optionsTP = "";
 
     if(promo === "MMI1") {
-        optionsTD = "<option>A1</option><option>A2</option><option>B1</option><option>B2</option><option>C1</option><option>C2</option>";
-        optionsTP = "<option>TP1</option><option>TP2</option><option>TP3</option><option>TP4</option><option>TP5</option><option>TP6</option>";
+        optionsTD = "<option>TD1</option><option>TD2</option><option>TD3</option>";
+        optionsTP = "<option>TPA</option><option>TPB</option><option>TPC</option><option>TPD</option><option>TPE</option><option>TPF</option>";
     } else {
-        optionsTD = "<option>A1</option><option>A2</option><option>B1</option><option>B2</option>";
-        optionsTP = "<option>TP1</option><option>TP2</option><option>TP3</option><option>TP4</option>";
+        optionsTD = "<option>TD1</option><option>TD2</option>";
+        optionsTP = "<option>TPA</option><option>TPB</option><option>TPC</option><option>TPD</option>";
     }
     td.innerHTML = optionsTD; tp.innerHTML = optionsTP;
 }

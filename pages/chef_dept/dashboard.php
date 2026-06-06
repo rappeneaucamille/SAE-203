@@ -43,6 +43,7 @@ $sans_stage = max(0, $total_etud - $stages_valides);
 
 // --- REQUÊTE UNIQUEMENT PAR ÉTUDIANT (SANS DUPLICATION) ---
 $sql = "SELECT 
+            e.num_etudiant, 
             e.nom, 
             e.prenom, 
             e.promotion,
@@ -82,6 +83,7 @@ $etudiants = $stmt_list->fetchAll();
               style="background-color: #DC3545; font-size: 0.85rem; letter-spacing: 0.5px; position: absolute; right: 0; top: 50%; transform: translateY(-50%); white-space: nowrap;">
             SESSION CHEF DE DEPARTEMENT
         </span>
+
     </h1>
     <div class="row g-4 mb-5">
         <div class="col-md-4">
@@ -137,9 +139,11 @@ $etudiants = $stmt_list->fetchAll();
                 </thead>
                 <tbody id="chefTable">
                     <?php foreach($etudiants as $e): ?>
-                    <tr class="search-item">
-                        <td class="py-4 ps-4 fw-bold text-dark" style="font-size: 1.05rem;">
-                            <span class="text-uppercase"><?= htmlspecialchars($e['nom']) ?></span> <?= htmlspecialchars($e['prenom']) ?>
+                        <td class="py-4 ps-4 fw-bold" style="font-size: 1.05rem;">
+                            <a href="../profil_etudiant.php?id=<?= urlencode($e['num_etudiant']) ?>" class="text-decoration-none text-dark">
+                                <span class="text-uppercase"><?= htmlspecialchars($e['nom']) ?></span> <?= htmlspecialchars($e['prenom']) ?>
+                                <i class="bi bi-box-arrow-up-right small text-secondary ms-1" style="font-size: 0.85rem;"></i>
+                            </a>
                         </td>
                         
                         <td class="text-center">

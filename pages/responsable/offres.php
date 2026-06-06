@@ -44,7 +44,7 @@ if ($_SESSION['role'] !== 'Responsable stage' && $_SESSION['role'] !== 'Administ
 
             <div class="col-md-6">
                 <label class="form-label small fw-bold text-dark">Dates (Début et Fin)</label>
-                <input type="text" name="dates" class="form-control py-2.5" placeholder="Ex : Du Mai au Juillet" style="border-radius: 8px; border: 1px solid #E2E8F0;">
+                <input type="text" name="dates" class="form-control py-2.5" placeholder="Ex : Du 6 Mai au 6 Juillet" style="border-radius: 8px; border: 1px solid #E2E8F0;">
             </div>
             <div class="col-md-6">
                 <label class="form-label small fw-bold text-dark">Rémunération (le cas échéant)</label>

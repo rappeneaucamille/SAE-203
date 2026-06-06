@@ -7,8 +7,8 @@ if ($_SESSION['role'] !== 'Enseignant standard' && $_SESSION['role'] !== 'Admini
     exit();
 }
 
-// 1. Récupération des données réelles de la base
-$sql = "SELECT e.nom, e.prenom, e.promotion, s.id_stage 
+// 1. Récupération des données réelles de la base (Ajout de e.num_etudiant)
+$sql = "SELECT e.num_etudiant, e.nom, e.prenom, e.promotion, s.id_stage 
         FROM Etudiant e 
         LEFT JOIN Stage s ON e.num_etudiant = s.num_etudiant 
         ORDER BY e.nom ASC";
@@ -50,9 +50,10 @@ $etudiants = $pdo->query($sql)->fetchAll();
                     <div class="search-item row align-items-center py-4 border-bottom m-0">
                         
                         <div class="col-md-5 ps-4">
-                            <span class="fw-bold text-dark fs-5" style="letter-spacing: -0.2px;">
+                            <a href="../profil_etudiant.php?id=<?= urlencode($et['num_etudiant']) ?>" class="text-decoration-none text-dark fw-bold fs-5" style="letter-spacing: -0.2px;">
                                 <span class="text-uppercase"><?= htmlspecialchars($et['nom']) ?></span> <?= htmlspecialchars($et['prenom']) ?>
-                            </span>
+                                <i class="bi bi-box-arrow-up-right small text-secondary ms-1" style="font-size: 0.85rem;"></i>
+                            </a>
                         </div>
                         
                         <div class="col-md-3 d-flex justify-content-center">
@@ -64,12 +65,12 @@ $etudiants = $pdo->query($sql)->fetchAll();
                         
                         <div class="col-md-4 text-end pe-4">
                             <?php if($et['id_stage']): ?>
-                                <span class="badge px-4 py-2 rounded-pill fw-medium align-middle" 
+                                <span class="badge px-4 py-2 rounded-pill fw-medium align-middle" \
                                       style="background-color: #D1E7DD !important; color: #0F5132 !important; border: 1px solid #BADBCC; font-size: 0.9rem;">
                                     <i class="bi bi-check-circle-fill me-1"></i> Affecté(e)
                                 </span>
                             <?php else: ?>
-                                <span class="badge px-4 py-2 rounded-pill fw-medium align-middle" 
+                                <span class="badge px-4 py-2 rounded-pill fw-medium align-middle" \
                                       style="background-color: #FFF3CD !important; color: #664D03 !important; border: 1px solid #FFECB5; font-size: 0.9rem;">
                                     <i class="bi bi-clock-fill me-1"></i> En Attente
                                 </span>

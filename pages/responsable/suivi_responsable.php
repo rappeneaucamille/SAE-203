@@ -15,8 +15,8 @@ if (isset($_POST['update_suivi'])) {
     echo "<div class='alert alert-success m-4 border-0 shadow-sm' style='border-radius: 12px;'>✅ Modifications enregistrées avec succès.</div>";
 }
 
-// Récupération des données
-$sql = "SELECT s.id_stage, s.lieu, s.convention_signee, s.probleme, s.alerte_etudiant, e.nom, e.prenom 
+// Récupération des données (e.num_etudiant est bien présent)
+$sql = "SELECT s.id_stage, s.lieu, s.convention_signee, s.probleme, s.alerte_etudiant, e.num_etudiant, e.nom, e.prenom 
         FROM stage s 
         JOIN etudiant e ON s.num_etudiant = e.num_etudiant";
 $res = $pdo->query($sql)->fetchAll();
@@ -43,8 +43,11 @@ $res = $pdo->query($sql)->fetchAll();
                          style="border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03), 0 2px 10px rgba(0,0,0,0.01) !important;">
                         
                         <div style="min-width: 180px; flex: 1;">
-                            <h4 class="fw-bold mb-1" style="color: #000000; font-size: 1.3rem; letter-spacing: -0.3px;">
-                                <?= htmlspecialchars($row['prenom']) ?> <?= strtoupper($row['nom']) ?>
+                            <h4 class="mb-1" style="font-size: 1.3rem; letter-spacing: -0.3px;">
+                                <a href="../profil_etudiant.php?id=<?= urlencode($row['num_etudiant']) ?>" class="text-decoration-none text-dark fw-bold">
+                                    <?= htmlspecialchars($row['prenom']) ?> <?= strtoupper($row['nom']) ?>
+                                    <i class="bi bi-box-arrow-up-right small text-secondary ms-1" style="font-size: 0.85rem;"></i>
+                                </a>
                             </h4>
                         </div>
 

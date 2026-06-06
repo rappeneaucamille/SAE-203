@@ -64,7 +64,8 @@ $enRecherche = $totalEtudiants - $stagesValides;
                         </thead>
                         <tbody>
                             <?php
-                            $sql = "SELECT r.*, e.nom, e.prenom 
+                            // Ajout de e.num_etudiant dans la sélection SQL
+                            $sql = "SELECT r.*, e.num_etudiant, e.nom, e.prenom 
                                     FROM Recherche r
                                     JOIN Effectuer ef ON r.id_recherche = ef.id_recherche
                                     JOIN Etudiant e ON ef.num_etudiant = e.num_etudiant
@@ -76,8 +77,11 @@ $enRecherche = $totalEtudiants - $stagesValides;
                             <?php else: 
                                 foreach($demandes as $d): ?>
                                 <tr>
-                                    <td class="py-4 ps-4 fw-bold text-dark" style="font-size: 1.05rem;">
-                                        <span class="text-uppercase"><?= htmlspecialchars($d['nom']) ?></span> <?= htmlspecialchars($d['prenom']) ?>
+                                    <td class="py-4 ps-4 fw-bold" style="font-size: 1.05rem;">
+                                        <a href="../profil_etudiant.php?id=<?= urlencode($d['num_etudiant']) ?>" class="text-decoration-none text-dark">
+                                            <span class="text-uppercase"><?= htmlspecialchars($d['nom']) ?></span> <?= htmlspecialchars($d['prenom']) ?>
+                                            <i class="bi bi-box-arrow-up-right small text-secondary ms-1" style="font-size: 0.85rem;"></i>
+                                        </a>
                                     </td>
                                     <td class="text-secondary fw-semibold"><?= htmlspecialchars($d['entreprise_contactee']) ?></td>
                                     <td class="pe-4 text-end">
@@ -117,8 +121,9 @@ $enRecherche = $totalEtudiants - $stagesValides;
                         </thead>
                         <tbody>
                             <?php
+                            // Ajout de e.num_etudiant dans la sélection SQL
                             $sqlSout = "SELECT s.date_soutenance, s.heure_debut, s.heure_fin, s.salle,
-                                               e.nom AS etud_nom, e.prenom AS etud_prenom, s.etudiant AS etud_email,
+                                               e.num_etudiant, e.nom AS etud_nom, e.prenom AS etud_prenom, s.etudiant AS etud_email,
                                                j.enseignant_1, j.enseignant_2
                                         FROM soutenance s
                                         INNER JOIN etudiant e ON LOWER(s.etudiant) = LOWER(e.identifiant)
@@ -136,7 +141,12 @@ $enRecherche = $totalEtudiants - $stagesValides;
                                         <small class="text-muted fw-bold"><?= substr($s['heure_debut'], 0, 5) ?> - <?= substr($s['heure_fin'], 0, 5) ?></small>
                                     </td>
                                     <td>
-                                        <div class="fw-bold text-dark text-uppercase"><?= htmlspecialchars($s['etud_nom'] ?? 'Inconnu') ?> <span class="text-capitalize fw-normal"><?= htmlspecialchars($s['etud_prenom'] ?? '') ?></span></div>
+                                        <div class="fw-bold" style="font-size: 1.05rem;">
+                                            <a href="../profil_etudiant.php?id=<?= urlencode($s['num_etudiant']) ?>" class="text-decoration-none text-dark">
+                                                <span class="text-uppercase"><?= htmlspecialchars($s['etud_nom'] ?? 'Inconnu') ?></span> <span class="text-capitalize fw-normal"><?= htmlspecialchars($s['etud_prenom'] ?? '') ?></span>
+                                                <i class="bi bi-box-arrow-up-right small text-secondary ms-1" style="font-size: 0.85rem;"></i>
+                                            </a>
+                                        </div>
                                         <small class="text-muted"><?= htmlspecialchars($s['etud_email']) ?></small>
                                     </td>
                                     <td class="text-center">

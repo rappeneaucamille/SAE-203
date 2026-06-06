@@ -158,8 +158,12 @@ $etudiants = $pdo->query("SELECT * FROM Etudiant ORDER BY nom ASC")->fetchAll(PD
                     ?>
                     <tr class="align-middle" style="border-bottom: 1px solid #F1F5F9;">
                         <td class="ps-4 py-3.5">
-                            <span class="text-dark fw-bold"><?= strtoupper(htmlspecialchars($e['nom'])) ?></span> 
-                            <span class="text-secondary ms-1"><?= htmlspecialchars($e['prenom']) ?></span>
+                            <a href="../profil_etudiant.php?id=<?= urlencode($e['num_etudiant']) ?>" class="text-decoration-none etudiant-lien">
+                                <span class="text-dark fw-bold text-uppercase"><?= htmlspecialchars($e['nom']) ?></span> 
+                                <span class="text-secondary ms-1"><?= htmlspecialchars($e['prenom']) ?></span>
+                                <i class="bi bi-box-arrow-up-right small ms-1 icone-lien"></i>
+                            </a>
+                            
                             <?php if($is_etud_en_attente): ?>
                                 <span class="badge bg-warning text-dark ms-2 fw-medium" style="font-size: 0.75rem; border-radius: 4px;">En attente</span>
                             <?php endif; ?>

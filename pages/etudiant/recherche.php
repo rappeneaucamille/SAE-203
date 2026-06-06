@@ -7,25 +7,84 @@ $id_etud = $_SESSION['user_id'];
 
 // --- 1. TRAITEMENT : RECHERCHE PERSONNELLE ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_perso'])) {
-    $entreprise = htmlspecialchars($_POST['ent_nom']);
+    $entreprise = trim(htmlspecialchars($_POST['ent_nom']));
     $sujet = htmlspecialchars($_POST['sujet']);
     
-    // On compile tout dans la colonne "reponses" pour que l'admin reçoive tout d'un coup
+    // Récupération des infos du maître de stage
+    $mds_nom = trim(htmlspecialchars($_POST['mds_nom']));
+    $mds_prenom = trim(htmlspecialchars($_POST['mds_prenom']));
+    $mds_email = trim(htmlspecialchars($_POST['mds_email']));
+    $mds_tel = isset($_POST['mds_tel']) ? trim(htmlspecialchars($_POST['mds_tel'])) : '';
+
+    // Compilation pour la colonne texte "reponses" (on la garde pour l'affichage admin actuel)
     $details = "DATES : " . htmlspecialchars($_POST['dates_stage']) . "\n";
     $details .= "MISSIONS : " . htmlspecialchars($_POST['missions']) . "\n";
     $details .= "--- INFOS MAÎTRE DE STAGE ---\n";
-    $details .= "NOM : " . htmlspecialchars($_POST['mds_nom']) . "\n";
-    $details .= "PRÉNOM : " . htmlspecialchars($_POST['mds_prenom']) . "\n";
-    $details .= "EMAIL : " . htmlspecialchars($_POST['mds_email']);
+    $details .= "NOM : " . $mds_nom . "\n";
+    $details .= "PRÉNOM : " . $mds_prenom . "\n";
+    $details .= "EMAIL : " . $mds_email;
     
-    $stmt = $pdo->prepare("INSERT INTO Recherche (entreprise_contactee, offre_consultee, statut, date_recherche, reponses) VALUES (?, ?, 'En attente', NOW(), ?)");
-    $stmt->execute([$entreprise, $sujet, $details]);
-    $id_r = $pdo->lastInsertId();
-    
-    $pdo->prepare("INSERT INTO Effectuer (num_etudiant, id_recherche) VALUES (?, ?)")->execute([$id_etud, $id_r]);
-    echo "<div class='alert alert-success shadow-sm'>🚀 Recherche personnelle transmise avec les coordonnées du tuteur !</div>";
-}
+    try {
+        $pdo->beginTransaction();
 
+        // ==========================================
+        // A. TRAITEMENT AUTOMATIQUE DU MAÎTRE DE STAGE
+        // ==========================================
+        $stmtCheckMaitre = $pdo->prepare("SELECT id_maitre FROM maitre_de_stage WHERE email = ?");
+        $stmtCheckMaitre->execute([$mds_email]);
+        $maitre_existant = $stmtCheckMaitre->fetch();
+
+        if ($maitre_existant) {
+            $id_maitre = $maitre_existant['id_maitre'];
+        } else {
+            // Le maître de stage est nouveau, on lui crée un compte temporaire
+            // On génère un mot de passe temporaire crypté au cas où
+            $pwd_temporaire = password_hash(bin2hex(random_bytes(8)), PASSWORD_DEFAULT);
+            
+            $stmtInsMaitre = $pdo->prepare("INSERT INTO maitre_de_stage (identifiant, pwd, nom, prenom, email, tel) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmtInsMaitre->execute([
+                $mds_email,       // identifiant
+                $pwd_temporaire,  // pwd crypté
+                $mds_nom,         // nom
+                $mds_prenom,      // prenom
+                $mds_email,       // email
+                $mds_tel          // tel
+            ]);
+            $id_maitre = $pdo->lastInsertId();
+        }
+
+        // ==========================================
+        // B. TRAITEMENT AUTOMATIQUE DE L'ENTREPRISE
+        // ==========================================
+        $stmtCheckEnt = $pdo->prepare("SELECT id_ent FROM entreprise WHERE nom = ?");
+        $stmtCheckEnt->execute([$entreprise]);
+        $ent_existante = $stmtCheckEnt->fetch();
+
+        if ($ent_existante) {
+            $id_ent = $ent_existante['id_ent'];
+        } else {
+            $stmtInsEnt = $pdo->prepare("INSERT INTO entreprise (nom, adresse, contact) VALUES (?, ?, ?)");
+            $stmtInsEnt->execute([$entreprise, "Renseignée par l'étudiant", $mds_nom . " " . $mds_prenom]);
+            $id_ent = $pdo->lastInsertId();
+        }
+
+        // ==========================================
+        // C. ENREGISTREMENT DE LA RECHERCHE
+        // ==========================================
+        $stmt = $pdo->prepare("INSERT INTO Recherche (entreprise_contactee, offre_consultee, statut, date_recherche, reponses) VALUES (?, ?, 'En attente', NOW(), ?)");
+        $stmt->execute([$entreprise, $sujet, $details]);
+        $id_r = $pdo->lastInsertId();
+        
+        // Liaison Étudiant <-> Recherche
+        $pdo->prepare("INSERT INTO Effectuer (num_etudiant, id_recherche) VALUES (?, ?)")->execute([$id_etud, $id_r]);
+        
+        $pdo->commit();
+        echo "<div class='alert alert-success shadow-sm'>🚀 Demande envoyée ! L'entreprise et le Maître de stage ont été enregistrés en base de données.</div>";
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        echo "<div class='alert alert-danger shadow-sm'>Erreur lors de la soumission : " . $e->getMessage() . "</div>";
+    }
+}
 // --- 2. TRAITEMENT : MISE À JOUR COMPÉTENCES ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_skills'])) {
     $comp = htmlspecialchars($_POST['competences_etud']);

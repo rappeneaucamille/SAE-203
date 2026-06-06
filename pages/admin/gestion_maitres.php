@@ -41,20 +41,42 @@ $maitres = $stmt->fetchAll();
             <?php foreach ($maitres as $m): 
                 // Extraction des infos du texte brut (reponses)
                 $infos = explode("\n", $m['reponses']);
-                $nom_tuteur = "Non spécifié";
+                $nom_tuteur = "";
+                $prenom_tuteur = "";
                 $email_tuteur = "Pas d'email";
                 
                 foreach($infos as $ligne) {
-                    if(strpos($ligne, 'NOM :') !== false) $nom_tuteur = trim(str_replace('NOM :', '', $ligne));
-                    if(strpos($ligne, 'PRÉNOM :') !== false) $nom_tuteur .= " " . trim(str_replace('PRÉNOM :', '', $ligne));
-                    if(strpos($ligne, 'EMAIL :') !== false) $email_tuteur = trim(str_replace('EMAIL :', '', $ligne));
+                    // On nettoie les espaces invisibles en début et fin de ligne
+                    $ligne = trim($ligne);
+                    
+                    // Si la ligne contient un deux-points, on la découpe proprement
+                    if (strpos($ligne, ':') !== false) {
+                        list($cle, $valeur) = explode(':', $ligne, 2);
+                        $cle = trim($cle);
+                        $valeur = trim($valeur);
+                        
+                        // On attribue les variables selon la clé trouvée
+                        if ($cle === 'NOM') {
+                            $nom_tuteur = $valeur;
+                        } elseif ($cle === 'PRÉNOM' || $cle === 'PRENOM') {
+                            $prenom_tuteur = $valeur;
+                        } elseif ($cle === 'EMAIL') {
+                            $email_tuteur = $valeur;
+                        }
+                    }
+                }
+                
+                // On assemble le nom complet proprement (ex: DUPONT Jean)
+                $nom_complet = trim($nom_tuteur . " " . $prenom_tuteur);
+                if (empty($nom_complet)) {
+                    $nom_complet = "Non spécifié";
                 }
             ?>
                 <div class="bg-white p-4 border-0 d-flex align-items-center justify-content-between flex-wrap gap-4 item-carte" 
-                     style="border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.04), 0 3px 10px rgba(0,0,0,0.015) !important; transition: transform 0.2s ease;">
+                    style="border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.04), 0 3px 10px rgba(0,0,0,0.015) !important; transition: transform 0.2s ease;">
                     
                     <div style="min-width: 220px;">
-                        <h4 class="fw-bold m-0 text-dark" style="font-size: 1.25rem; letter-spacing: -0.3px;"><?= htmlspecialchars($nom_tuteur) ?></h4>
+                        <h4 class="fw-bold m-0 text-dark" style="font-size: 1.25rem; letter-spacing: -0.3px;"><?= htmlspecialchars($nom_complet) ?></h4>
                         <div class="text-muted small mt-1" style="font-size: 0.88rem;"><?= htmlspecialchars($email_tuteur) ?></div>
                     </div>
 
@@ -70,7 +92,7 @@ $maitres = $stmt->fetchAll();
                     <div>
                         <button class="btn fw-medium d-inline-flex align-items-center gap-2 px-3 text-white shadow-sm" 
                                 style="background-color: #2F448A; border-radius: 8px; font-size: 0.85rem; height: 38px; border: none;"
-                                onclick="alert('Ce tuteur n\'a pas encore de compte utilisateur. Les accès seront générés lors de l\'envoi de la convention.')">
+                                onclick="alert('Ce tuteur n\'a pas encore de compte utilisateur.')">
                             <i class="bi bi-check2-circle"></i> MODIFIER PW
                         </button>
                     </div>
