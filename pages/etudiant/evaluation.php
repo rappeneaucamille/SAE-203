@@ -56,7 +56,7 @@ if ($soutenance) {
                             <span class="d-block small opacity-75">De <?= substr($soutenance['heure_debut'], 0, 5) ?> à <?= substr($soutenance['heure_fin'], 0, 5) ?></span>
                         </div>
                         <div class="col-sm-6">
-                            <small class="opacity-75 d-block">LSalle</small>
+                            <small class="opacity-75 d-block">Salle</small>
                             <span class="fw-bold fs-5"><span class="badge bg-white text-primary"><?= htmlspecialchars($soutenance['salle']) ?></span></span>
                         </div>
                         <div class="col-11">
