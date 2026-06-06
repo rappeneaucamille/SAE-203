@@ -6,7 +6,6 @@ include '../../includes/header.php';
 if ($_SESSION['role'] !== 'Chef de département' && $_SESSION['role'] !== 'Administrateur') {
     header('Location: ../../index.php');
     exit();
-}
 
 $promo_filter = isset($_GET['promo']) ? $_GET['promo'] : (isset($_SESSION['promotion_chef']) ? $_SESSION['promotion_chef'] : '');
 $where_clause = $promo_filter ? "WHERE e.promotion = :promo" : "";
