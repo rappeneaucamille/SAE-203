@@ -8,14 +8,14 @@ if ($_SESSION['role'] !== 'Responsable stage' && $_SESSION['role'] !== 'Administ
     exit();
 }
 
-// LOGIQUE TECHNIQUE (CONSERVÉE ET SÉCURISÉE)
+// LOGIQUE TECHNIQUE
 if (isset($_POST['update_suivi'])) {
     $stmt = $pdo->prepare("UPDATE stage SET probleme = ?, convention_signee = ? WHERE id_stage = ?");
     $stmt->execute([$_POST['refomulation'], $_POST['convention'], $_POST['id_stage']]);
     echo "<div class='alert alert-success m-4 border-0 shadow-sm' style='border-radius: 12px;'>✅ Modifications enregistrées avec succès.</div>";
 }
 
-// Récupération des données (e.num_etudiant est bien présent)
+// Récupération des données
 $sql = "SELECT s.id_stage, s.lieu, s.convention_signee, s.probleme, s.alerte_etudiant, e.num_etudiant, e.nom, e.prenom 
         FROM stage s 
         JOIN etudiant e ON s.num_etudiant = e.num_etudiant";

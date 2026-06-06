@@ -7,7 +7,7 @@ if ($_SESSION['role'] !== 'Enseignant standard' && $_SESSION['role'] !== 'Admini
     exit();
 }
 
-// 1. Récupération des données réelles de la base (Ajout de e.num_etudiant)
+// 1. Récupération des données réelles de la base
 $sql = "SELECT e.num_etudiant, e.nom, e.prenom, e.promotion, s.id_stage 
         FROM Etudiant e 
         LEFT JOIN Stage s ON e.num_etudiant = s.num_etudiant 
@@ -86,7 +86,7 @@ $etudiants = $pdo->query($sql)->fetchAll();
 </div>
 
 <script>
-// Filtre de recherche dynamique adapté à la mise en page à plat
+// Filtre de recherche
 document.getElementById('tableSearch').addEventListener('keyup', function() {
     let filter = this.value.toUpperCase();
     let items = document.querySelectorAll(".search-item");

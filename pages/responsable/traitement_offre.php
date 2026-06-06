@@ -11,7 +11,7 @@ if ($_SESSION['role'] !== 'Responsable stage' && $_SESSION['role'] !== 'Administ
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Récupération de tous les champs
     $intitule    = $_POST['titre'];
-    $contact     = trim($_POST['ent']); // Nom de l'entreprise entré par le responsable
+    $contact     = trim($_POST['ent']); 
     $description = $_POST['desc'];
     $competences = $_POST['competences'];
     $lieu        = $_POST['lieu'];

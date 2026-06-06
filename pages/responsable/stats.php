@@ -8,7 +8,7 @@ if ($_SESSION['role'] !== 'Responsable stage' && $_SESSION['role'] !== 'Administ
     exit();
 }
 
-// 1. Calcul des statistiques globales (Calculs réels et dynamiques)
+// 1. Calcul des statistiques globales
 $total = $pdo->query("SELECT COUNT(*) FROM etudiant")->fetchColumn();
 $valides = $pdo->query("SELECT COUNT(*) FROM stage")->fetchColumn();
 $en_attente = $pdo->query("SELECT COUNT(*) FROM recherche WHERE statut = 'En attente'")->fetchColumn();

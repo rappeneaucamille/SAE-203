@@ -12,7 +12,6 @@ $mon_email = $_SESSION['identifiant'] ?? '';
 
 // Condition pour l'administrateur afin qu'il voit tout
 if ($_SESSION['role'] === 'Administrateur') {
-    // CORRECTION : Remplacement de LEFT JOIN etudiant par INNER JOIN pour masquer les étudiants inexistants (INCONNU)
     $sql = "SELECT s.*, e.num_etudiant, e.nom, e.prenom, e.promotion, j.enseignant_1, j.enseignant_2 
             FROM soutenance s
             INNER JOIN etudiant e ON LOWER(s.etudiant) = LOWER(e.identifiant) 
@@ -20,7 +19,7 @@ if ($_SESSION['role'] === 'Administrateur') {
             ORDER BY s.date_soutenance ASC";
     $stmt = $pdo->query($sql);
 } else {
-    // Requête d'origine pour le jury standard (Modifiée aussi en INNER JOIN par sécurité)
+    // Requête d'origine pour le jury standard
     $sql = "SELECT s.*, e.num_etudiant, e.nom, e.prenom, e.promotion, j.enseignant_1, j.enseignant_2 
             FROM soutenance s
             INNER JOIN etudiant e ON LOWER(s.etudiant) = LOWER(e.identifiant) 

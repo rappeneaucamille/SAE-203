@@ -200,7 +200,7 @@ $etudiants = $pdo->query("SELECT * FROM Etudiant ORDER BY nom ASC")->fetchAll(PD
 </div>
 
 <script>
-// Filtre de recherche universel et dynamique
+// Filtre de recherche
 document.getElementById('tableSearch').addEventListener('keyup', function() {
     let filter = this.value.toUpperCase();
     let rows = document.querySelectorAll("tbody tr");

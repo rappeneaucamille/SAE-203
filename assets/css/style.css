@@ -33,13 +33,12 @@ body {
 .card {
     background-color: #FFFFFF;
     border: none !important;
-    border-radius: 20px !important; /* Arrondis modernes vus sur toutes les pages */
+    border-radius: 20px !important; 
     box-shadow: 0 15px 35px rgba(0,0,0,0.04), 0 3px 10px rgba(0,0,0,0.015) !important;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     margin-bottom: 24px;
 }
 
-/* Style générique des titres épurés (sans la barre latérale) */
 h1, h2, h3 {
     color: #000000;
     font-weight: 800;

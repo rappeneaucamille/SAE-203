@@ -20,7 +20,6 @@ if (isset($_GET['id_offre'])) {
 
         if ($offre) {
             // 2. On insère une nouvelle ligne dans la table Recherche
-            // On utilise 'contact' comme nom d'entreprise et 'intitule' comme offre consultee
             $sqlReq = "INSERT INTO Recherche (entreprise_contactee, offre_consultee, statut, date_recherche, reponses) 
                        VALUES (?, ?, 'En attente', NOW(), 0)";
             $stmt = $pdo->prepare($sqlReq);

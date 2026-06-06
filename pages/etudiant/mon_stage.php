@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 $id_etud = $_SESSION['user_id'];
 
-// --- TRAITEMENT DU SIGNALEMENT (Origine) ---
+// --- TRAITEMENT DU SIGNALEMENT  ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['send_incident'])) {
     $message_alerte = htmlspecialchars($_POST['message']);
     $update = $pdo->prepare("UPDATE Stage SET alerte_etudiant = ? WHERE num_etudiant = ?");
@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['send_incident'])) {
     $success_msg = "Votre signalement a bien été transmis.";
 }
 
-// --- TRAITEMENT DE L'ENREGISTREMENT DU MAÎTRE DE STAGE (Origine) ---
+// --- TRAITEMENT DE L'ENREGISTREMENT DU MAÎTRE DE STAGE  ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_tuteur'])) {
     $nom_tuteur = trim(htmlspecialchars($_POST['nom_tuteur']));
     $prenom_tuteur = trim(htmlspecialchars($_POST['prenom_tuteur']));
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_tuteur'])) {
     exit();
 }
 
-// Récupération complète du stage avec respect strict des majuscules de ton fichier SQL
+// Récupération complète du stage
 $query = "SELECT s.*, e.Nom AS nom_etud, e.Prenom AS prenom_etud, e.promotion, ent.Nom AS nom_ent, ent.Adresse AS adresse_ent, m.Nom AS nom_maitre, m.Prenom AS prenom_maitre
           FROM Stage s
           JOIN etudiant e ON s.num_etudiant = e.num_etudiant
@@ -63,7 +63,7 @@ if ($stage) {
     }
 }
 
-// Sécurité pour le formatage des dates (Évite l'erreur Deprecated et le 01/01/1970)
+// Sécurité pour le formatage des dates
 $date_debut_formatee = "";
 $date_fin_formatee = "";
 if ($stage) {

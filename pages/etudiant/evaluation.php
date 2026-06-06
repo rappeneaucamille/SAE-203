@@ -13,7 +13,6 @@ $etudiant_id = $_SESSION['identifiant'] ?? '';
 
 $soutenance = false;
 if (!empty($etudiant_id)) {
-    // AJOUT : On récupère aussi la salle, les horaires et le jury affecté
     $stmt = $pdo->prepare("SELECT s.*, j.enseignant_1, j.enseignant_2 
                            FROM soutenance s 
                            LEFT JOIN jury j ON s.id_jury = j.id_jury 

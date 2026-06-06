@@ -14,8 +14,6 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     $id_offre = $_GET['id'];
 
     try {
-        // On supprime d'abord les liaisons si tu as une table 'avoir' ou 'postuler'
-        // Sinon, on supprime directement l'offre
         $stmt = $pdo->prepare("DELETE FROM Offre WHERE id_offre = ?");
         $stmt->execute([$id_offre]);
 

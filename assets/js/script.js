@@ -1,8 +1,3 @@
-/**
- * Script de gestion pour la plateforme MMI Stages
- * Focus : Expérience Utilisateur (UX) et Scannabilité
- */
-
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Plateforme MMI Stages chargée !");
 
@@ -46,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 4. INTERACTIVITÉ DES CARTES (HOVER JS) ---
-    // On ajoute une petite classe "shadow" plus forte au survol pour le relief
     const cards = document.querySelectorAll('.card');
     cards.forEach(card => {
         card.addEventListener('mouseenter', () => {
@@ -58,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- 5. CALCULATEUR DE MOYENNE EN DIRECT (Page Jury) ---
-    // Si tu es sur la page jury/notes.php, calcule la moyenne auto
     const noteRapport = document.querySelector('input[name="note_rapport"]');
     const noteSoutenance = document.querySelector('input[name="note_soutenance"]');
     
@@ -68,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const s = parseFloat(noteSoutenance.value) || 0;
             const moy = (r + s) / 2;
             console.log("Moyenne calculée : " + moy + "/20");
-            // Optionnel : afficher la moyenne dans un petit badge
         };
         noteRapport.addEventListener('input', updateMoyenne);
         noteSoutenance.addEventListener('input', updateMoyenne);

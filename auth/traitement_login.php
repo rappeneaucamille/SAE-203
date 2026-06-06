@@ -43,7 +43,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['identifiant'] = $user['identifiant']; 
         $_SESSION['role'] = $user['fonctions'];
 
-        // On renvoie sur l'index qui gère le switch des rôles !
         header('Location: ../index.php');
         exit();
     }

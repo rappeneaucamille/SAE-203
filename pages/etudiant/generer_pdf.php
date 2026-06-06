@@ -29,7 +29,7 @@ if (!$stage || (strtolower(trim($stage['convention_signee'] ?? '')) !== 'oui' &&
 // Décoder les données juridiques de la convention
 $convention_data = json_decode($stage['description'] ?? '{}', true);
 
-// --- SÉCURISATION ET FORMATAGE DES DATES (Évite l'erreur Deprecated et 01/01/1970) ---
+// --- SÉCURISATION ET FORMATAGE DES DATES ---
 $date_debut_formatee = "Non spécifiée";
 $date_fin_formatee = "Non spécifiée";
 

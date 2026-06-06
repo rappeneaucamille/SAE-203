@@ -37,7 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $mdp = password_hash($mdp_brut, PASSWORD_DEFAULT);
 
                 // 3. INSERTION EN BDD AVEC LE STATUT 'VALIDÉ'
-                // Attention : vérifie bien que ta colonne s'appelle 'pwd' dans ta table Enseignant !
                 $sql = "INSERT INTO Enseignant (identifiant, pwd, nom, prenom, fonctions, statut_compte) VALUES (?, ?, ?, ?, ?, 'Validé')";
                 $pdo->prepare($sql)->execute([$email, $mdp, $nom, $prenom, $fonction]);
                 

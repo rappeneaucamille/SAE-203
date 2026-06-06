@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_perso'])) {
     $mds_email = trim(htmlspecialchars($_POST['mds_email']));
     $mds_tel = isset($_POST['mds_tel']) ? trim(htmlspecialchars($_POST['mds_tel'])) : '';
 
-    // Compilation pour la colonne texte "reponses" (on la garde pour l'affichage admin actuel)
+    // Compilation pour la colonne texte "reponses" 
     $details = "DATES : " . htmlspecialchars($_POST['dates_stage']) . "\n";
     $details .= "MISSIONS : " . htmlspecialchars($_POST['missions']) . "\n";
     $details .= "--- INFOS MAÎTRE DE STAGE ---\n";

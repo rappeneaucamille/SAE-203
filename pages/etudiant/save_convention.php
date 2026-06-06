@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_stage'])) {
     $json_data = json_encode($convention_data, JSON_UNESCAPED_UNICODE);
 
     try {
-        // Mise à jour de la table Stage (respect de la casse du fichier SQL)
+        // Mise à jour de la table Stage
         $query = "UPDATE Stage SET description = ? WHERE id_stage = ?";
         $stmt = $pdo->prepare($query);
         $stmt->execute([$json_data, $id_stage]);

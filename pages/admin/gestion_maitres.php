@@ -104,7 +104,6 @@ $maitres = $stmt->fetchAll();
 </div>
 
 <style>
-    /* Optionnel : Un léger effet au survol pour donner de la vie à l'interface */
     .item-carte:hover {
         transform: translateY(-2px);
         box-shadow: 0 18px 40px rgba(0,0,0,0.06) !important;
