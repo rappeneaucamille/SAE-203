@@ -8,16 +8,19 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] === 'Etudiant') {
     exit();
 }
 
-if (!isset($_GET['id']) || empty($_GET['id'])) {
+// CORRECTION : On vérifie si l'ID existe et n'est pas une chaîne vide (car empty(0) renvoie true)
+if (!isset($_GET['id']) || $_GET['id'] === '') {
     echo "<div class='container py-5'><div class='alert alert-danger'>Aucun étudiant spécifié.</div></div>";
     include '../includes/footer.php';
     exit();
 }
 
-$num_etud = $_GET['id'];
+// On force la valeur en chaîne de caractères pour éviter les bugs de conversion SQL
+$num_etud = (string)$_GET['id'];
 
 // 1. RÉCUPÉRATION DES INFOS PERSO DE L'ÉTUDIANT
-$stmtEtud = $pdo->prepare("SELECT * FROM Etudiant WHERE num_etudiant = ? OR LOWER(identifiant) = LOWER(?)");
+// CORRECTION : On passe les paramètres proprement sous forme de chaînes
+$stmtEtud = $pdo->prepare("SELECT * FROM Etudiant WHERE CAST(num_etudiant AS CHAR) = ? OR LOWER(identifiant) = LOWER(?)");
 $stmtEtud->execute([$num_etud, $num_etud]);
 $etudiant = $stmtEtud->fetch();
 
@@ -35,9 +38,9 @@ $stmtStage = $pdo->prepare("
     SELECT s.*, m.nom as mds_nom, m.prenom as mds_prenom, m.email as mds_email 
     FROM Stage s 
     LEFT JOIN Maitre_Stage m ON s.id_maitre = m.id_maitre 
-    WHERE s.num_etudiant = ?
+    WHERE CAST(s.num_etudiant AS CHAR) = ?
 ");
-$stmtStage->execute([$vrai_num_etud]);
+$stmtStage->execute([(string)$vrai_num_etud]);
 $stage = $stmtStage->fetch();
 
 // 3. RÉCUPÉRATION DE L'ENTREPRISE (via la recherche validée ou liée au stage)
@@ -46,10 +49,10 @@ $stmtRecherche = $pdo->prepare("
     FROM recherche r
     JOIN effectuer ef ON r.id_recherche = ef.id_recherche
     LEFT JOIN entreprise ent ON r.entreprise_contactee = ent.nom
-    WHERE ef.num_etudiant = ? AND r.statut = 'Validée'
+    WHERE CAST(ef.num_etudiant AS CHAR) = ? AND r.statut = 'Validée'
     ORDER BY r.id_recherche DESC LIMIT 1
 ");
-$stmtRecherche->execute([$vrai_num_etud]);
+$stmtRecherche->execute([(string)$vrai_num_etud]);
 $recherche = $stmtRecherche->fetch();
 
 // 4. RÉCUPÉRATION DE LA SOUTENANCE ET DES NOTES
@@ -169,11 +172,6 @@ $soutenance = $stmtSoutenance->fetch();
                         <?= !empty($stage['date_visite']) ? date('d/m/Y', strtotime($stage['date_visite'])) : 'Non programmée actuellement' ?>
                     </span>
                 </div>
-                
-                <?php if($_SESSION['role'] === 'Administrateur' || $_SESSION['role'] === 'Responsable stage'): ?>
-                    <form method="POST" action="" class="mt-3 row g-2 align-items-center">
-                        </form>
-                <?php endif; ?>
             </div>
         </div>
 

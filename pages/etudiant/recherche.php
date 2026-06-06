@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_perso'])) {
         // ==========================================
         // A. TRAITEMENT AUTOMATIQUE DU MAÎTRE DE STAGE
         // ==========================================
-        $stmtCheckMaitre = $pdo->prepare("SELECT id_maitre FROM maitre_de_stage WHERE email = ?");
+        $stmtCheckMaitre = $pdo->prepare("SELECT id_maitre FROM maitre_stage WHERE email = ?");
         $stmtCheckMaitre->execute([$mds_email]);
         $maitre_existant = $stmtCheckMaitre->fetch();
 
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_perso'])) {
             // On génère un mot de passe temporaire crypté au cas où
             $pwd_temporaire = password_hash(bin2hex(random_bytes(8)), PASSWORD_DEFAULT);
             
-            $stmtInsMaitre = $pdo->prepare("INSERT INTO maitre_de_stage (identifiant, pwd, nom, prenom, email, tel) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmtInsMaitre = $pdo->prepare("INSERT INTO maitre_stage (identifiant, pwd, nom, prenom, email, tel) VALUES (?, ?, ?, ?, ?, ?)");
             $stmtInsMaitre->execute([
                 $mds_email,       // identifiant
                 $pwd_temporaire,  // pwd crypté

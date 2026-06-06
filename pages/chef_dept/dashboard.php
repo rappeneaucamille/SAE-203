@@ -6,6 +6,7 @@ include '../../includes/header.php';
 if ($_SESSION['role'] !== 'Chef de département' && $_SESSION['role'] !== 'Administrateur') {
     header('Location: ../../index.php');
     exit();
+} // <-- L'accolade manquante était ici !
 
 $promo_filter = isset($_GET['promo']) ? $_GET['promo'] : (isset($_SESSION['promotion_chef']) ? $_SESSION['promotion_chef'] : '');
 $where_clause = $promo_filter ? "WHERE e.promotion = :promo" : "";
@@ -82,8 +83,8 @@ $etudiants = $stmt_list->fetchAll();
               style="background-color: #DC3545; font-size: 0.85rem; letter-spacing: 0.5px; position: absolute; right: 0; top: 50%; transform: translateY(-50%); white-space: nowrap;">
             SESSION CHEF DE DEPARTEMENT
         </span>
-
     </h1>
+
     <div class="row g-4 mb-5">
         <div class="col-md-4">
             <div class="card card-stats p-4 border-0 shadow-sm" style="background-color: #71B999; border-radius: 16px;">
@@ -138,55 +139,55 @@ $etudiants = $stmt_list->fetchAll();
                 </thead>
                 <tbody id="chefTable">
                     <?php foreach($etudiants as $e): ?>
-                        <td class="py-4 ps-4 fw-bold" style="font-size: 1.05rem;">
-                            <a href="../profil_etudiant.php?id=<?= urlencode($e['num_etudiant']) ?>" class="text-decoration-none text-dark">
-                                <span class="text-uppercase"><?= htmlspecialchars($e['nom']) ?></span> <?= htmlspecialchars($e['prenom']) ?>
-                                <i class="bi bi-box-arrow-up-right small text-secondary ms-1" style="font-size: 0.85rem;"></i>
-                            </a>
-                        </td>
-                        
-                        <td class="text-center">
-                            <div class="text-white fw-bold d-inline-flex align-items-center justify-content-center" 
-                                 style="background-color: #6C757D; width: 55px; height: 32px; border-radius: 6px; font-size: 0.85rem; letter-spacing: 0.5px;">
-                                <?= htmlspecialchars($e['promotion'] ?? 'N/A') ?>
-                            </div>
-                        </td>
-                        
-                        <td class="text-secondary fw-semibold">
-                            <?= $e['entreprise_contactee'] ? htmlspecialchars($e['entreprise_contactee']) : '<span class="text-muted fw-normal italic">Aucune</span>' ?>
-                        </td>
-                        
-                        <td class="text-muted small py-3" style="font-size: 0.85rem; line-height: 1.5;">
-                            <?php 
-                            if(!empty($e['reponses']) && $e['reponses'] !== "0") {
-                                $lignes = explode("\n", $e['reponses']);
-                                foreach($lignes as $ligne) {
-                                    if(strpos($ligne, 'NOM :') !== false || strpos($ligne, 'PRÉNOM :') !== false || strpos($ligne, 'EMAIL :') !== false) {
-                                        echo htmlspecialchars($ligne) . "<br>";
+                        <tr class="search-item"> <td class="py-4 ps-4 fw-bold" style="font-size: 1.05rem;">
+                                <a href="../profil_etudiant.php?id=<?= urlencode($e['num_etudiant']) ?>" class="text-decoration-none text-dark">
+                                    <span class="text-uppercase"><?= htmlspecialchars($e['nom']) ?></span> <?= htmlspecialchars($e['prenom']) ?>
+                                    <i class="bi bi-box-arrow-up-right small text-secondary ms-1" style="font-size: 0.85rem;"></i>
+                                </a>
+                            </td>
+                            
+                            <td class="text-center">
+                                <div class="text-white fw-bold d-inline-flex align-items-center justify-content-center" 
+                                     style="background-color: #6C757D; width: 55px; height: 32px; border-radius: 6px; font-size: 0.85rem; letter-spacing: 0.5px;">
+                                    <?= htmlspecialchars($e['promotion'] ?? 'N/A') ?>
+                                </div>
+                            </td>
+                            
+                            <td class="text-secondary fw-semibold">
+                                <?= $e['entreprise_contactee'] ? htmlspecialchars($e['entreprise_contactee']) : '<span class="text-muted fw-normal italic">Aucune</span>' ?>
+                            </td>
+                            
+                            <td class="text-muted small py-3" style="font-size: 0.85rem; line-height: 1.5;">
+                                <?php 
+                                if(!empty($e['reponses']) && $e['reponses'] !== "0") {
+                                    $lignes = explode("\n", $e['reponses']);
+                                    foreach($lignes as $ligne) {
+                                        if(strpos($ligne, 'NOM :') !== false || strpos($ligne, 'PRÉNOM :') !== false || strpos($ligne, 'EMAIL :') !== false) {
+                                            echo htmlspecialchars($ligne) . "<br>";
+                                        }
                                     }
+                                } else {
+                                    echo '<span class="text-danger fw-normal"><i class="bi bi-x-circle me-1"></i> Non renseigné</span>';
                                 }
-                            } else {
-                                echo '<span class="text-danger fw-normal"><i class="bi bi-x-circle me-1"></i> Non renseigné</span>';
-                            }
-                            ?>
-                        </td>
+                                ?>
+                            </td>
 
-                        <td class="pe-4 text-center">
-                            <?php if($e['statut'] === 'Validée'): ?>
-                                <span class="badge px-3 py-2 rounded-pill fw-medium" style="background-color: #D1E7DD !important; color: #0F5132 !important; border: 1px solid #BADBCC; font-size: 0.85rem; display: inline-block; min-width: 110px;">
-                                    <i class="bi bi-check-circle-fill me-1"></i> Affecté(e)
-                                </span>
-                            <?php elseif($e['statut'] === 'En attente'): ?>
-                                <span class="badge px-3 py-2 rounded-pill fw-medium" style="background-color: #FFF3CD !important; color: #664D03 !important; border: 1px solid #FFECB5; font-size: 0.85rem; display: inline-block; min-width: 110px;">
-                                    <i class="bi bi-clock-fill me-1"></i> En Attente
-                                </span>
-                            <?php else: ?>
-                                <span class="badge px-3 py-2 rounded-pill fw-medium" style="background-color: #F8D7DA !important; color: #842029 !important; border: 1px solid #F5C2C7; font-size: 0.85rem; display: inline-block; min-width: 110px;">
-                                    <i class="bi bi-exclamation-circle-fill me-1"></i> En Attente
-                                </span>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
+                            <td class="pe-4 text-center">
+                                <?php if($e['statut'] === 'Validée'): ?>
+                                    <span class="badge px-3 py-2 rounded-pill fw-medium" style="background-color: #D1E7DD !important; color: #0F5132 !important; border: 1px solid #BADBCC; font-size: 0.85rem; display: inline-block; min-width: 110px;">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Affecté(e)
+                                    </span>
+                                <?php elseif($e['statut'] === 'En attente'): ?>
+                                    <span class="badge px-3 py-2 rounded-pill fw-medium" style="background-color: #FFF3CD !important; color: #664D03 !important; border: 1px solid #FFECB5; font-size: 0.85rem; display: inline-block; min-width: 110px;">
+                                        <i class="bi bi-clock-fill me-1"></i> En Attente
+                                    </span>
+                                <?php else: ?>
+                                    <span class="badge px-3 py-2 rounded-pill fw-medium" style="background-color: #F8D7DA !important; color: #842029 !important; border: 1px solid #F5C2C7; font-size: 0.85rem; display: inline-block; min-width: 110px;">
+                                        <i class="bi bi-exclamation-circle-fill me-1"></i> Sans démarche
+                                    </span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
