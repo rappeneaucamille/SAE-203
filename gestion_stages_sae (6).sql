@@ -20,6 +20,7 @@ SET time_zone = "+00:00";
 --
 -- Base de données : `gestion_stages_sae`
 --
+USE cuvillierrappeneau_gestion_stages_sae;
 
 -- --------------------------------------------------------
 
@@ -588,3 +589,17 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+CREATE OR REPLACE VIEW Etudiant AS SELECT * FROM etudiant;
+CREATE OR REPLACE VIEW Enseignant AS SELECT * FROM enseignant;
+CREATE OR REPLACE VIEW Recherche AS SELECT * FROM recherche;
+CREATE OR REPLACE VIEW Entreprise AS SELECT * FROM entreprise;
+CREATE OR REPLACE VIEW Stage AS SELECT * FROM stage;
+CREATE OR REPLACE VIEW Maitre_Stage AS SELECT * FROM maitre_stage;
+CREATE OR REPLACE VIEW Effectuer AS SELECT * FROM effectuer;
+CREATE OR REPLACE VIEW Droits AS SELECT * FROM droits;
+CREATE OR REPLACE VIEW Jury AS SELECT * FROM jury;
+CREATE OR REPLACE VIEW Offre AS SELECT * FROM offre;
+CREATE OR REPLACE VIEW Posseder_enseignant AS SELECT * FROM posseder_enseignant;
+CREATE OR REPLACE VIEW Posseder_etudiant AS SELECT * FROM posseder_etudiant;
+CREATE OR REPLACE VIEW Soutenance AS SELECT * FROM soutenance;
+CREATE OR REPLACE VIEW Avoir AS SELECT * FROM avoir;
