@@ -5,10 +5,10 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Paramètres de connexion
-$host = 'mysql-cuvillierrappeneau.alwaysdata.net';
-$dbname = 'cuvillierrappeneau_gestion_stages_sae';
-$user = 'cuvillierrappeneau';
-$pass = 'projets.mmicb';
+$host = 'localhost';
+$dbname = 'gestion_stages_sae';
+$user = 'root';
+$pass = '';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass);
